@@ -101,6 +101,11 @@ if ($.isNode()) {
             await showMsg();
             message +=  "----\n\n"
         }
+		
+			if( (i+1)%4 ==0 || i == cookiesArr.length -1 ){
+				message = message + getPic()
+				postToDingTalk(message)
+			}
     }
 
     if ($.isNode() && allMessage) {
@@ -111,7 +116,6 @@ if ($.isNode()) {
         $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
     })
     .finally(() => {
-        postToDingTalk(message)
         $.done();
     })
 async function showMsg() {
