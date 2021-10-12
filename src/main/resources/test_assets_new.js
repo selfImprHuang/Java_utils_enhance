@@ -40,6 +40,7 @@ if ($.isNode()) {
         return;
     }
      message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>资产变动</font> \n\n --- \n\n"
+	let count = 0 
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i];
@@ -77,8 +78,7 @@ if ($.isNode()) {
              
              //加上名称
              message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" +  username + " </font> </font> \n\n "
-      
-
+     
             console.log(`\n********开始【京东账号${$.index}】${$.nickName || $.UserName}******\n`);
             if (!$.isLogin) {
                 $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
@@ -102,10 +102,11 @@ if ($.isNode()) {
             message +=  "----\n\n"
         }
 		
-			if( (i+1)%4 ==0 || i == cookiesArr.length -1 ){
-				message = message + getPic()
-				postToDingTalk(message)
-			}
+		count ++
+		if( (count+1)%4 ==0 ){
+			postToDingTalk(message)
+			message = ""
+		}
     }
 
     if ($.isNode() && allMessage) {
@@ -116,6 +117,9 @@ if ($.isNode()) {
         $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
     })
     .finally(() => {
+		if (message != ""){
+		postToDingTalk(message)
+		}
         $.done();
     })
 async function showMsg() {

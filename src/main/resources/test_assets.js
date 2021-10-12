@@ -58,6 +58,7 @@ let cookiesArr = [], cookie = '';
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
   }
+  let count = 0 
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -99,8 +100,8 @@ let cookiesArr = [], cookie = '';
       await jdWish()
     }
     message +=  "----\n\n"
-  
-	if( (i+1)%4 ==0 || i == cookiesArr.length -1 ){
+	count ++ 
+	if( (count+1)%4 ==0 || i == cookiesArr.length -1 ){
 		message = message + getPic()
         postToDingTalk(message)
 	}
