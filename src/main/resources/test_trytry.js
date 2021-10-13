@@ -65,7 +65,7 @@
       * 若只提供5分试用资格，当前设置为10，则不会申请
       * 可设置环境变量：JD_TRY_MINSUPPLYNUM
       * */
-     minSupplyNum: process.env.JD_TRY_MINSUPPLYNUM || 1,
+     minSupplyNum:  20,
      /*
       * 过滤大于设定值的已申请人数，例如下面设置的1000，A商品已经有1001人申请了，则A商品不会进行申请，会被跳过
       * 可设置环境变量：JD_TRY_APPLYNUMFILTER
@@ -251,8 +251,8 @@
                                  console.log(`检测第 ${page} 页 第 ${i + 1} 个商品\n${data.data.feedList[i].skuTitle}`)
                                  if(parseFloat(data.data.feedList[i].jdPrice) <= args_xh.jdPrice){
                                      console.log(`商品被过滤，${data.data.feedList[i].jdPrice} < ${args_xh.jdPrice} \n`)
-                                 }else if(parseFloat(data.data.feedList[i].supplyNum) < args_xh.minSupplyNum && data.data.feedList[i].supplyNum !== null){
-                                     console.log(`商品被过滤，提供申请的份数小于预设申请的份数 \n`)
+                                 }else if(parseFloat(data.data.feedList[i].supplyNum) > args_xh.minSupplyNum && data.data.feedList[i].supplyNum !== null){
+                                     console.log(`商品被过滤，提供申请的份数大于预设申请的份数 \n`)
                                  }else if(parseFloat(data.data.feedList[i].applyNum) > args_xh.applyNumFilter && data.data.feedList[i].applyNum !== null){
                                      console.log(`商品被过滤，已申请试用人数大于预设人数 \n`)
                                  }else if(parseFloat(data.data.feedList[i].trialPrice) > args_xh.trialPrice){
