@@ -18,7 +18,7 @@
  * 请提前取关至少250个商店确保京东试用脚本正常运行
  * 没有写通知，是否申请成功没有进行通知，但脚本会把状态log出日志
  */
- let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=fa87e34729eaa6113fddfa857efebb477dea0a433d6eecfe93b1d3f5e24847b9"
+ let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f6"
  let maxSize = 200
  let totalPages = 999999 //总页数
  const $ = new Env('京东试用')
@@ -387,6 +387,7 @@
 									message += "<font color=\'#4B0082\' size=1>"  + `申请商品：${item.trialName}` + "</font>\n\n"
 									 message += "<font color=\'#4B0082\' size=1>"  + `当前状态：${item.text.text}` + "</font>\n\n"
 									 message += "<font color=\'#4B0082\' size=1>"  + `-----\n\n` + "</font>\n\n"
+									 count ++
 								}
                              }
                          }
