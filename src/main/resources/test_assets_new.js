@@ -102,11 +102,11 @@ if ($.isNode()) {
             message +=  "----\n\n"
         }
 		
-		count ++
 		if( (count+1)%4 ==0 ){
 			postToDingTalk(message)
 			message = ""
 		}
+		count ++
     }
 
     if ($.isNode() && allMessage) {

@@ -384,7 +384,7 @@
                                  console.log()
 
 
-                               if count < 3{
+                               if (count < 3){
 									message += "<font color=\'#4B0082\' size=1>"  + `申请商品：${item.trialName}` + "</font>\n\n"
 									 message += "<font color=\'#4B0082\' size=1>"  + `当前状态：${item.text.text}` + "</font>\n\n"
 									 message += "<font color=\'#4B0082\' size=1>"  + `-----\n\n` + "</font>\n\n"

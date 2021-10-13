@@ -100,11 +100,12 @@ let cookiesArr = [], cookie = '';
       await jdWish()
     }
     message +=  "----\n\n"
-	count ++ 
 	if( (count+1)%4 ==0 || i == cookiesArr.length -1 ){
 		message = message + getPic()
         postToDingTalk(message)
+		message = ""
 	}
+	count ++ 
   }
 
   if ($.isNode() && allMessage) {
