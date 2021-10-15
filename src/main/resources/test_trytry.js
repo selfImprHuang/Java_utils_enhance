@@ -19,7 +19,7 @@
  * 没有写通知，是否申请成功没有进行通知，但脚本会把状态log出日志
  */
  let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f6"
- let maxSize = 100
+ let maxSize = 50
  let totalPages = 999999 //总页数
  const $ = new Env('京东试用')
  const URL = 'https://api.m.jd.com/client.action'
@@ -82,7 +82,7 @@
       * 例如是18件，将会进行第三次获取，直到过滤完毕后为20件才会停止，不建议设置太大
       * 可设置环境变量：JD_TRY_MAXLENGTH
       * */
-     maxLength:  40
+     maxLength:  30
  }
  
  !(async() => {
@@ -169,6 +169,8 @@
                      await try_MyTrials(1, 2)    //申请成功的商品
                      // await try_MyTrials(1, 3)    //申请失败的商品
                      await showMsg()
+					 //下一个要重新去拉列表
+                     trialActivityIdList = []
                  }
                   postToDingTalk(message)
                   message = ""
