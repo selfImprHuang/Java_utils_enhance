@@ -19,7 +19,7 @@
  * 没有写通知，是否申请成功没有进行通知，但脚本会把状态log出日志
  */
  let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f6"
- let maxSize = 200
+ let maxSize = 100
  let totalPages = 999999 //总页数
  const $ = new Env('京东试用')
  const URL = 'https://api.m.jd.com/client.action'
@@ -82,7 +82,7 @@
       * 例如是18件，将会进行第三次获取，直到过滤完毕后为20件才会停止，不建议设置太大
       * 可设置环境变量：JD_TRY_MAXLENGTH
       * */
-     maxLength:  60
+     maxLength:  40
  }
  
  !(async() => {
@@ -143,7 +143,7 @@
                      $.totalSuccess = 0
                      let size = 1;
                      let list = [1,8,7,10,11] 
-                    for (let i =0;i<list.length;i++){
+                     for (let i =0;i<list.length;i++){
                         while(trialActivityIdList.length < args_xh.maxLength && size < maxSize &&  size < totalPages){
                             console.log(`\n正在进行第 ${size} 次获取试用商品\n`)
                             console.log(`\n当前产品页面总长度为${totalPages} 页\n`)
