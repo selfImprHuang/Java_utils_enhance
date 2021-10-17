@@ -20,7 +20,6 @@
  */
 
  let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
- let maxSize = 15
  let totalPages = 999999 //总页数
  const $ = new Env('京东试用')
  const URL = 'https://api.m.jd.com/client.action'
@@ -28,8 +27,7 @@
  let trialActivityTitleList = []
  let notifyMsg = ''
  let message = ""
- let channelEnd = Math.floor(Math.random() * (5) + 3)
-  let channel = [1,2,3,5,8,9,10,11,15]
+
  let process={
      env:{
          "JD_TRY":"true"
@@ -37,6 +35,9 @@
  }
  // default params
  let args_xh = {
+	  channelEnd : Math.floor(Math.random() * (4) + 3)
+      channel : [1,2,8,3,5,7,9,10,11,15]
+	  maxSize : 15
      /*
       * 是否进行通知
       * 可设置环境变量：JD_TRY_NOTIFY
@@ -100,7 +101,7 @@
              return
          }
              for(let i = 0; i < $.cookiesArr.length; i++){
-                 message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>闪电试用</font> \n\n --- \n\n"
+                 message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>随机试用</font> \n\n --- \n\n"
                  if($.cookiesArr[i]){
                      $.cookie = $.cookiesArr[i];
                      $.UserName = decodeURIComponent($.cookie.match(/pt_pin=(.+?);/) && $.cookie.match(/pt_pin=(.+?);/)[1])
@@ -150,8 +151,8 @@
                      let size = 1;
 
                      for (let i =0;i<list.length;i++){
-						maxSize = Math.floor(Math.random() * (10) + 8)
-                        while(trialActivityIdList.length < args_xh.maxLength && size < maxSize &&  size < totalPages-1){
+						args_xh.maxSize = Math.floor(Math.random() * (10) + 8)
+                        while(trialActivityIdList.length < args_xh.maxLength && size < args_xh.maxSize &&  size < totalPages-1){
                             console.log(`\n正在进行第 ${size} 次获取试用商品\n`)
                             console.log(`\n当前产品页面总长度为${totalPages} 页\n`)
                             await try_feedsList(list[i], size++) 
@@ -199,14 +200,14 @@
  
  function getList(){
 	 for (i=0 ; i < Math.floor(Math.random() * (5001) + 500) ; i++){
-		 index1 =  Math.floor(Math.random() * (channel.length) + 0)
-		 index2 =  Math.floor(Math.random() * (channel.length) + 0)
-		 temp = channel[index1]
-		 channel[index1] = channel[index2]
-		 channel[index2] = temp 
+		 index1 =  Math.floor(Math.random() * (args_xh.channel.length) + 0)
+		 index2 =  Math.floor(Math.random() * (args_xh.channel.length) + 0)
+		 temp = args_xh.channel[index1]
+		 args_xh.channel[index1] = args_xh.channel[index2]
+		 args_xh.channel[index2] = temp 
 	 }
 	 
-	 return channel.slice(0,channelEnd)
+	 return channel.slice(0,args_xh.channelEnd)
  }
  
  function requireConfig(){
@@ -1104,7 +1105,7 @@
      const body = {
          "msgtype": "markdown",
          "markdown": {
-             "title":"闪电试用",
+             "title":"随机试用",
              "text": message1
          },
          "at": {
