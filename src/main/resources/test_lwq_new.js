@@ -2,14 +2,12 @@
 cron "30 10,22 * * *" jd_bean_change.js, tag:资产变化强化版by-ccwav
 */
 let roleMap = {
-    "jd_4521b375ebb5d":"锟子怪",
-    "jd_542c10c0222bc":"康子怪",
-    "jd_66dcb31363ef6":"涛子怪",
-    "jd_45d917547c763":"跑腿小怪",
-    "417040678_m":"斌子怪",
-    "jd_73d88459d908e":"杰子怪",
+    "好吧好吧5577":"wq_好吧好吧5577",
+    "jd_qapvwBDaRqgW":"wgh_19970291531",
+    "18070420956_p":"刘吴奇",
 }
-let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
+
+let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=fa87e34729eaa6113fddfa857efebb477dea0a433d6eecfe93b1d3f5e24847b9"
 //更新by ccwav,20210821
 const $ = new Env('京东资产变动通知');
 const notify = $.isNode() ? require('./sendNotify') : '';

@@ -23,14 +23,11 @@ let roleMap = {
     "jd_4521b375ebb5d":"锟子怪",
     "jd_542c10c0222bc":"康子怪",
     "jd_66dcb31363ef6":"涛子怪",
-    "18070420956_p":"奇怪子",
     "jd_45d917547c763":"跑腿小怪",
-    "417040678_m":"斌子",
+    "417040678_m":"斌子怪",
     "jd_73d88459d908e":"杰子怪",
-    "jd_66ea783827d30":"军军酱",
-    "jd_4311ac0ff4456":"居居酱"
 }
-let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=fa87e34729eaa6113fddfa857efebb477dea0a433d6eecfe93b1d3f5e24847b9"
+let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
 const $ = new Env('京东资产变动通知');
 let  jdFruitShareArr = [], isBox = false, notify, newShareCodes;
 //助力好友分享码(最多4个,否则后面的助力失败),原因:动动农场每人每天只有四次助力机会
@@ -74,10 +71,10 @@ let cookiesArr = [], cookie = '';
       $.balance = 0;
       $.expiredBalance = 0;
 
-      if($.UserName == "jd_66ea783827d30" || $.UserName == "jd_4311ac0ff4456"){
-          continue 
-      }
       username = $.UserName
+      if (roleMap[username] == undefined){
+            continue 
+      }
       username = roleMap[username]
 
       await TotalBean();

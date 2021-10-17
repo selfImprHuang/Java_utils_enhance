@@ -35,9 +35,9 @@
  }
  // default params
  let args_xh = {
-	  channelEnd : Math.floor(Math.random() * (4) + 3)
-      channel : [1,2,8,3,5,7,9,10,11,15]
-	  maxSize : 15
+	  channelEnd : Math.floor(Math.random() * (4) + 3),
+      channel : [1,2,8,3,5,7,9,10,11,15],
+	  maxSize : 15,
      /*
       * 是否进行通知
       * 可设置环境变量：JD_TRY_NOTIFY
@@ -102,6 +102,7 @@
          }
              for(let i = 0; i < $.cookiesArr.length; i++){
                  message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>随机试用</font> \n\n --- \n\n"
+                 await $.wait(Math.floor(Math.random() * (300000) + 5000));
                  if($.cookiesArr[i]){
                      $.cookie = $.cookiesArr[i];
                      $.UserName = decodeURIComponent($.cookie.match(/pt_pin=(.+?);/) && $.cookie.match(/pt_pin=(.+?);/)[1])
@@ -140,7 +141,7 @@
                       if ($.UserName == "jd_4311ac0ff4456"){
                         username = "居子"
                       }
-					  args_xh.maxLength = Math.floor(Math.random() * (10) + 8)
+					  args_xh.maxLength = Math.floor(Math.random() * (15) + 10)
                       let list = getList()
                       //加上名称
                       message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" +  username + " </font> </font> \n\n "
@@ -151,7 +152,7 @@
                      let size = 1;
 
                      for (let i =0;i<list.length;i++){
-						args_xh.maxSize = Math.floor(Math.random() * (10) + 8)
+						args_xh.maxSize = Math.floor(Math.random() * (20) + 10)
                         while(trialActivityIdList.length < args_xh.maxLength && size < args_xh.maxSize &&  size < totalPages-1){
                             console.log(`\n正在进行第 ${size} 次获取试用商品\n`)
                             console.log(`\n当前产品页面总长度为${totalPages} 页\n`)
@@ -207,7 +208,7 @@
 		 args_xh.channel[index2] = temp 
 	 }
 	 
-	 return channel.slice(0,args_xh.channelEnd)
+	 return args_xh.channel.slice(0,args_xh.channelEnd)
  }
  
  function requireConfig(){

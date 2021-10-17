@@ -20,8 +20,9 @@ cron "2 9 * * *" script-path=https://jdsharedresourcescdn.azureedge.net/jdresour
 京东资产变动通知 = type=cron,script-path=https://jdsharedresourcescdn.azureedge.net/jdresource/jd_bean_change.js, cronexpr="2 9 * * *", timeout=3600, enable=true
  */
 let roleMap = {
-    "jd_66ea783827d30":"军军酱",
-    "jd_4311ac0ff4456":"居居酱"
+    "好吧好吧5577":"wq_好吧好吧5577",
+    "jd_qapvwBDaRqgW":"wgh_19970291531",
+    "18070420956_p":"刘吴奇",
 }
 let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
 const $ = new Env('京东资产变动通知');
@@ -51,6 +52,7 @@ let cookiesArr = [], cookie = '';
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
   }
+  let count = 0 
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -65,13 +67,13 @@ let cookiesArr = [], cookie = '';
       $.nickName = '';
       $.balance = 0;
       $.expiredBalance = 0;
-      
+
       username = $.UserName
       if (roleMap[username] == undefined){
             continue 
       }
       username = roleMap[username]
-    
+
       await TotalBean();
        //加上名称
        message = message + "<font color=\'#778899\' size=1>【羊毛姐妹】<font color=\'#FFA500\' size=2>" +  username + `( ${$.nickName} )`+ " </font> </font> \n\n "
@@ -92,6 +94,12 @@ let cookiesArr = [], cookie = '';
       await jdWish()
     }
     message +=  "----\n\n"
+	if( (count+1)%4 ==0 || i == cookiesArr.length -1 ){
+		message = message + getPic()
+        postToDingTalk(message)
+		message = ""
+	}
+	count ++ 
   }
 
   if ($.isNode() && allMessage) {
@@ -102,8 +110,7 @@ let cookiesArr = [], cookie = '';
       $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
     })
     .finally(() => {
-        message = message + getPic()
-        postToDingTalk(message)
+        
       $.done();
     })
 
