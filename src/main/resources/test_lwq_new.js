@@ -7,7 +7,7 @@ let roleMap = {
     "18070420956_p":"刘吴奇",
 }
 
-let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=fa87e34729eaa6113fddfa857efebb477dea0a433d6eecfe93b1d3f5e24847b9"
+let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
 //更新by ccwav,20210821
 const $ = new Env('京东资产变动通知');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -112,7 +112,7 @@ if ($.isNode()) {
     })
     .finally(() => {
 		if (message != ""){
-		postToDingTalk(message)
+		  postToDingTalk(message)
 		}
         $.done();
     })

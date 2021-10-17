@@ -114,7 +114,7 @@ if ($.isNode()) {
     })
     .finally(() => {
 		if (message != ""){
-		postToDingTalk(message)
+		  postToDingTalk(message)
 		}
         $.done();
     })

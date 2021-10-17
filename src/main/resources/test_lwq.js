@@ -110,7 +110,10 @@ let cookiesArr = [], cookie = '';
       $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
     })
     .finally(() => {
-        
+           if (message != ""){
+				postToDingTalk(message)
+
+			} 
       $.done();
     })
 
