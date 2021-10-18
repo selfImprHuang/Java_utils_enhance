@@ -174,7 +174,7 @@ let args_xh = {
               console.log(`间隔延时中，请等待 ${args_xh.applyInterval} ms\n`)
               await $.wait(args_xh.applyInterval);
             }
-            message = message + "<font color=\'#778899\' size=2>" + "本循环申请数量：" +  trialActivityIdList.length + "</font> </font> \n\n "
+            message = message + "<font color=\'#33ff00\' size=2>" + "本循环申请数量：" +  trialActivityIdList.length + "</font> </font> \n\n "
             args_xh.listCount = args_xh.listCount + trialActivityIdList.length
             trialActivityIdList = []
             size = 1
