@@ -29,6 +29,7 @@
  let notifyMsg = ''
  let message = ""
  let minItemValue = 500
+ let wordLength = 1000
  let process = {
    env: {
      "JD_TRY": "true"
@@ -161,6 +162,10 @@
                console.log(`\n正在进行第 ${size} 次获取试用商品\n`)
                console.log(`\n当前产品页面总长度为${totalPages} 页\n`)
                await try_feedsList(list[i], size++)
+               if (sensMessage.length > wordLength) {
+                  postToDingTalk(sensMessage)
+                  sensMessage = ""
+               }
                if (args_xh.listCount < args_xh.maxLength) {
                  args_xh.applyInterval = Math.floor(Math.random() * (4000) + 5000)
                  console.log(`间隔延时中，请等待 ${args_xh.applyInterval} ms`)
@@ -176,8 +181,7 @@
                await $.wait(args_xh.applyInterval);
              }
              message = message + "<font color=\'#33ff00\' size=2>" + "本循环申请数量：" +  trialActivityIdList.length + "</font> </font> \n\n "
-             postToDingTalk(sensMessage)
-             sensMessage = ""
+            
              args_xh.listCount = args_xh.listCount + trialActivityIdList.length
              trialActivityIdList = []
              size = 1
@@ -301,7 +305,6 @@
                         args_xh.titleFilters.some(fileter_word =>{
                             sensMessage +=  "<font color=\'#FF3300\' size=2>" + "敏感词汇：" + fileter_word + "</font> </font> \n\n"
                         })
-                         
                          console.log('商品被过滤，含有关键词 \n')
                        } else {
                          console.log(`商品通过，将加入试用组，trialActivityId为${data.data.feedList[i].trialActivityId}\n`)
