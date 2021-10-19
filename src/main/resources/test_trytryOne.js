@@ -20,11 +20,12 @@
  */
 
  let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
+ let dingtalk1 = "https://oapi.dingtalk.com/robot/send?access_token=a3e80da6f064321881fc38e43a07bfde7a61b6f18245454520fb749556cebfcd"
  let totalPages = 999999 //总页数
  const $ = new Env('京东试用')
  const URL = 'https://api.m.jd.com/client.action'
  let trialActivityIdList = []
- let sensMessage = ""
+ let sensMessage = "试用\n\n"
  let trialActivityTitleList = []
  let notifyMsg = ''
  let message = ""
@@ -170,8 +171,8 @@
                   console.log("-----------------------------------")
                   console.log("-----------------------------------")
                   console.log("-----------------------------------")
-                  postToDingTalk(sensMessage)
-                  sensMessage = ""
+                  postToDingTalk1(sensMessage)
+                  sensMessage = "试用\n\n"
                }
                if (args_xh.listCount < args_xh.maxLength) {
                  args_xh.applyInterval = Math.floor(Math.random() * (4000) + 5000)
@@ -310,7 +311,9 @@
                        } else if (args_xh.titleFilters.some(fileter_word => data.data.feedList[i].skuTitle.includes(fileter_word))) {
                         sensMessage +=  "<font color=\'#FF0000\' size=2>" + data.data.feedList[i].skuTitle + "</font> </font> \n\n"
                         args_xh.titleFilters.some(fileter_word =>{
-                            sensMessage +=  "<font color=\'#FF3300\' size=2>" + "敏感词汇：" + fileter_word + "</font> </font> \n\n"
+                            if (data.data.feedList[i].skuTitle.includes(fileter_word)){
+                              sensMessage +=  "<font color=\'#FF3300\' size=2>" + "敏感词汇：" + fileter_word + "</font> </font> \n\n"
+                            }
                         })
                          console.log('商品被过滤，含有关键词 \n')
                        } else {
@@ -1173,3 +1176,39 @@
    }
  }
  
+
+ function postToDingTalk1(messgae) {
+  const message1 = "" + messgae
+  // that.log(messgae)
+
+  const body = {
+    "msgtype": "markdown",
+    "markdown": {
+      "title": "错误筛选",
+      "text": message1
+    },
+    "at": {
+      "atMobiles": [],
+      "isAtAll": false
+    }
+  }
+
+  $.post(toDingtalk(dingtalk1, JSON.stringify(body)), (data, status, xhr) => {
+    try {
+      that.log(resp)
+      that.log(data)
+      if (err) {
+        that.log(JSON.stringify(err));
+        $.logErr(err);
+      } else {
+        if (safeGet(data)) {
+          $.duckRes = JSON.parse(data);
+        }
+      }
+    } catch (e) {
+      $.logErr(e, resp)
+    } finally {
+      resolve();
+    }
+  }, "json")
+}
