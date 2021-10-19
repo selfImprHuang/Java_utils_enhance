@@ -312,7 +312,7 @@
                         sensMessage +=  "<font color=\'#FF0000\' size=2>" + data.data.feedList[i].skuTitle + "</font> </font> \n\n"
                         args_xh.titleFilters.some(fileter_word =>{
                             if (data.data.feedList[i].skuTitle.includes(fileter_word)){
-                              sensMessage +=  "<font color=\'#FF3300\' size=2>" + "敏感词汇：" + fileter_word + "</font> </font> \n\n"
+                              sensMessage +=  "<font color=\'#000099\' size=2>" + "敏感词汇：" + fileter_word + "</font> </font> \n\n"
                             }
                         })
                          console.log('商品被过滤，含有关键词 \n')
