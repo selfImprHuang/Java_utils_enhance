@@ -107,7 +107,7 @@
        }
        for (let i = 0; i < $.cookiesArr.length; i++) {
          message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>随机试用</font> \n\n --- \n\n"
-         await $.wait(Math.floor(Math.random() * (30000) + 5000));
+         await $.wait(Math.floor(Math.random() * (10000) + 5000));
          if ($.cookiesArr[i]) {
            $.cookie = $.cookiesArr[i];
            $.UserName = decodeURIComponent($.cookie.match(/pt_pin=(.+?);/) && $.cookie.match(/pt_pin=(.+?);/)[1])
@@ -159,7 +159,7 @@
            for (let i = 0; i < list.length; i++) {
              args_xh.maxSize = Math.floor(Math.random() * (21) + 10)
              message = message + "<font color=\'#FF0000\' size=2>" + "最大列表长度：" + args_xh.maxSize + "  申请列表：" + list[i] + "</font> </font> \n\n"
-             while (args_xh.listCount < args_xh.maxLength && size < args_xh.maxSize && size < totalPages - 1) {
+             while (args_xh.listCount + trialActivityIdList.length < args_xh.maxLength && size < args_xh.maxSize && size < totalPages - 1) {
                console.log(`\n正在进行第 ${size} 次获取试用商品\n`)
                console.log(`\n当前产品页面总长度为${totalPages} 页\n`)
                await try_feedsList(list[i], size++)
@@ -286,7 +286,7 @@
              totalPages = data.data.pages
              console.log(`获取到商品 ${data.data.feedList.length} 条\n`)
              for (let i = 0; i < data.data.feedList.length; i++) {
-               if (trialActivityIdList.length > args_xh.maxLength) {
+               if (args_xh.listCount + i + 1 > args_xh.maxLength) {
                  console.log('商品列表长度已满.结束获取')
                } else
                  if (data.data.feedList[i].applyState === 1) {
