@@ -163,6 +163,13 @@
                console.log(`\n当前产品页面总长度为${totalPages} 页\n`)
                await try_feedsList(list[i], size++)
                if (sensMessage.length > wordLength) {
+                  console.log("-----------------------------------")
+                  console.log("-----------------------------------")
+                  console.log("-----------------------------------")
+                  console.log("-----------------------------------")
+                  console.log("-----------------------------------")
+                  console.log("-----------------------------------")
+                  console.log("-----------------------------------")
                   postToDingTalk(sensMessage)
                   sensMessage = ""
                }
@@ -180,7 +187,7 @@
                console.log(`间隔延时中，请等待 ${args_xh.applyInterval} ms\n`)
                await $.wait(args_xh.applyInterval);
              }
-             message = message + "<font color=\'#33ff00\' size=2>" + "本循环申请数量：" +  trialActivityIdList.length + "</font> </font> \n\n "
+             message = message + "<font color=\'#33ff00\' size=2>" + "本循环申请数量：" +  trialActivityIdList.length + "总量限制为：" + args_xh.listCount + "</font> </font> \n\n "
             
              args_xh.listCount = args_xh.listCount + trialActivityIdList.length
              trialActivityIdList = []
