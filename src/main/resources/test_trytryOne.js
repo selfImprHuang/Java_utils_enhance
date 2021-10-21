@@ -276,9 +276,7 @@
  //获取商品列表并且过滤 By X1a0He
  function try_feedsList(tabId, page) {
    return new Promise((resolve, reject) => {
-    if (totalPages == 999999) {
-        message = message + "<font color=\'#FF0000\' size=2>" + " 当前最大页数为：" + data.data.pages   + "</font> </font> \n\n"
-    }
+    
      const body = JSON.stringify({
        "tabId": `${tabId}`,
        "page": page,
@@ -293,6 +291,9 @@
            // console.debug(data)
            // return
            data = JSON.parse(data)
+           if (totalPages == 999999) {
+               message = message + "<font color=\'#FF0000\' size=2>" + " 当前最大页数为：" + data.data.pages   + "</font> </font> \n\n"
+           }
            if (data.success) {
              $.totalPages = data.data.pages
              totalPages = data.data.pages
