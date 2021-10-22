@@ -146,7 +146,7 @@
            if ($.UserName == "jd_4311ac0ff4456") {
              username = "居子"
            }
-           args_xh.maxLength = Math.floor(Math.random() * (25) + 5)
+           args_xh.maxLength = Math.floor(Math.random() * (20) + 10)
            let list = getList()
            //加上名称
            message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" + username + " </font> </font> \n\n "
