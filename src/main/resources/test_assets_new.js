@@ -7,7 +7,8 @@ let roleMap = {
     "jd_66dcb31363ef6":"涛子怪",
     "jd_45d917547c763":"跑腿小怪",
     "417040678_m":"斌子怪",
-    "jd_73d88459d908e":"杰子怪",
+    "jd_73d88459d908e":"杰杰子",
+	"381550701lol":"漪漪子",
 }
 let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
 //更新by ccwav,20210821
