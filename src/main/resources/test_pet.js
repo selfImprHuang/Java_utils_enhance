@@ -19,6 +19,7 @@ let randomCount = $.isNode() ? 20 : 5;
   message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>动动萌宠</font> \n\n --- \n\n"
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
+	  await $.wait(Math.floor(Math.random() * (300000) + 5000));
       cookie = cookiesArr[i];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
       $.index = i + 1;

@@ -27,7 +27,8 @@ $.linkIds=["9wdf1YTT2L59Vr-meKskLA"];
         that.log("当前linkId："+$.linkId);
          for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
-      cookie = cookiesArr[i];
+await $.wait(Math.floor(Math.random() * (1200000) + 5000));     
+	 cookie = cookiesArr[i];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1])
 
 

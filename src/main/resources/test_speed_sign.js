@@ -41,6 +41,7 @@ const JD_API_HOST = 'https://api.m.jd.com/', actCode = 'visa-card-001';
   message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>极速签到挣金币</font> \n\n --- \n\n"
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
+	  await $.wait(Math.floor(Math.random() * (1200000) + 5000));
       cookie = cookiesArr[i];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1])
       $.index = i + 1;

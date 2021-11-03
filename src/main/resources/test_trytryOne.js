@@ -107,7 +107,7 @@
        }
        for (let i = 0; i < $.cookiesArr.length; i++) {
          message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>随机试用</font> \n\n --- \n\n"
-         await $.wait(Math.floor(Math.random() * (10000) + 5000));
+         await $.wait(Math.floor(Math.random() * (175000) + 5000));
          if ($.cookiesArr[i]) {
            $.cookie = $.cookiesArr[i];
            $.UserName = decodeURIComponent($.cookie.match(/pt_pin=(.+?);/) && $.cookie.match(/pt_pin=(.+?);/)[1])
