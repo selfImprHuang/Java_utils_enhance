@@ -6,6 +6,7 @@ let shareCodes =
  [ // 这个列表填入你要助力的好友的shareCode
 ]
 let message = '', subTitle = '', option = {}, isFruitFinished = false;
+let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
 const retainWater = 100;//保留水滴大于多少g,默认100g;
 let jdNotify = false;//是否关闭通知，false打开通知推送，true关闭通知推送
 let jdFruitBeanCard = false;//农场使用水滴换豆卡(如果出现限时活动时100g水换20豆,此时比浇水划算,推荐换豆),true表示换豆(不浇水),false表示不换豆(继续浇水),脚本默认是浇水
@@ -1461,8 +1462,6 @@ function jsonParse(str) {
 
 //我加的函数
 function postToDingTalk(messgae) {
-    const dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=18444b555747aad3381bc1d1e3dea72b03158e152a846f818d82a1ca946bd430"
-
     const message1 = "" + messgae
     that.log(messgae)
 

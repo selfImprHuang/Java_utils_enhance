@@ -6,6 +6,7 @@ const randomCount = $.isNode() ? 0 : 5;
 let jdNotify = true; // 是否关闭通知，false打开通知推送，true关闭通知推送
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message = "";
+let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
@@ -653,7 +654,6 @@ function jsonParse(str) {
 
 //我加的函数
 function postToDingTalk(messgae) {
-    const dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=18444b555747aad3381bc1d1e3dea72b03158e152a846f818d82a1ca946bd430"
 
     const message1 = "" + messgae
     that.log(messgae)

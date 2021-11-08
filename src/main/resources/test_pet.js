@@ -9,6 +9,7 @@ let jdNotify = false;//是否关闭通知，false打开通知推送，true关闭
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 let goodsUrl = '', taskInfoKey = [];
 let randomCount = $.isNode() ? 20 : 5;
+let postAddress = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0" 
 !(async () => {
   await requireConfig();
   if (!cookiesArr[0]) {
@@ -19,7 +20,7 @@ let randomCount = $.isNode() ? 20 : 5;
   message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>动动萌宠</font> \n\n --- \n\n"
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
-	  await $.wait(Math.floor(Math.random() * (300000) + 5000));
+	    await $.wait(Math.floor(Math.random() * (300000) + 5000));
       cookie = cookiesArr[i];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
       $.index = i + 1;
@@ -38,7 +39,7 @@ let randomCount = $.isNode() ? 20 : 5;
         username = "康康"
       }
        //加上名称
-       message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" +  username + " </font> </font> \n\n "
+      message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" +  username + " </font> </font> \n\n "
       await TotalBean();
       that.log(`\n开始【动动账号${$.index}】${$.nickName || $.UserName}\n`);
       if (!$.isLogin) {
@@ -653,8 +654,6 @@ function jsonParse(str) {
 
 //我加的函数
 function postToDingTalk(messgae) {
-    const dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=18444b555747aad3381bc1d1e3dea72b03158e152a846f818d82a1ca946bd430"
-
     const message1 = "" + messgae
     that.log(messgae)
 
@@ -671,7 +670,7 @@ function postToDingTalk(messgae) {
     }
 
 
-    $.post(toDingtalk(dingtalk,JSON.stringify(body)), (data,status,xhr)=>{
+    $.post(toDingtalk(postAddress ,JSON.stringify(body)), (data,status,xhr)=>{
         try {
             that.log(resp)
             that.log(data)
