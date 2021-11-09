@@ -3,8 +3,8 @@ let cookiesArr = [], cookie = '', jdFruitShareArr = [], isBox = false, notify, n
 //此此内容是IOS用户下载脚本到本地使用，填写互助码的地方，同一动动账号的好友互助码请使用@符号隔开。
 //下面给出两个账号的填写示例（iOS只支持2个动动账号）
 let shareCodes =
- [ // 这个列表填入你要助力的好友的shareCode
-]
+  [ // 这个列表填入你要助力的好友的shareCode
+  ]
 let message = '', subTitle = '', option = {}, isFruitFinished = false;
 let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
 const retainWater = 100;//保留水滴大于多少g,默认100g;
@@ -17,12 +17,12 @@ const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%2
   await requireConfig();
   message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>动动农场</font> \n\n --- \n\n"
   if (!cookiesArr[0]) {
-    $.msg($.name, '【提示】请先获取动动账号一cookie\n直接使用NobyDa的动动签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
+    $.msg($.name, '【提示】请先获取动动账号一cookie\n直接使用NobyDa的动动签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
     return;
   }
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
-		await $.wait(Math.floor(Math.random() * (175000) + 5000));
+      await $.wait(Math.floor(Math.random() * (175000) + 5000));
       cookie = cookiesArr[i];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1])
       $.index = i + 1;
@@ -30,22 +30,22 @@ const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%2
       $.nickName = '';
       await TotalBean();
       username = $.UserName
-      if ($.UserName == "jd_66ea783827d30"){
+      if ($.UserName == "jd_66ea783827d30") {
         username = "跑腿小弟"
       }
-      if ($.UserName == "jd_4521b375ebb5d"){
+      if ($.UserName == "jd_4521b375ebb5d") {
         username = "锟锟"
       }
-      if ($.UserName == "jd_542c10c0222bc"){
+      if ($.UserName == "jd_542c10c0222bc") {
         username = "康康"
       }
-      
-      
-       //加上名称
-       message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" +  username + " </font> </font> \n\n "
+
+
+      //加上名称
+      message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" + username + " </font> </font> \n\n "
       that.log(`\n开始【动动账号${$.index}】${$.nickName || $.UserName}\n`);
       if (!$.isLogin) {
-        $.msg($.name, `【提示】cookie已失效`, `动动账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
+        $.msg($.name, `【提示】cookie已失效`, `动动账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
 
         if ($.isNode()) {
           await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `动动账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
@@ -57,21 +57,21 @@ const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%2
       await shareCodesFormat();
       await jdFruit();
     }
-     message += "----\n\n"
+    message += "----\n\n"
   }
 
   that.log(message)
- 
+
 })()
-    .catch((e) => {
-      $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
-    })
-    .finally(() => {
+  .catch((e) => {
+    $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+  })
+  .finally(() => {
     that.log(message)
     message = message + getPic()
     postToDingTalk(message)
-      $.done();
-    })
+    $.done();
+  })
 
 
 
@@ -81,16 +81,16 @@ async function jdFruit() {
     await initForFarm();
     if ($.farmInfo.farmUserPro) {
       // option['media-url'] = $.farmInfo.farmUserPro.goodsImage;
-       message = message +  "<font color=\'#778899\' size=2>【水果名称】 " + `${$.farmInfo.farmUserPro.name}` + "</font>\n\n";
-      message +=  "<font color=\'#778899\' size=2>【已兑换水果】" + `${$.farmInfo.farmUserPro.winTimes}` +  "次</font>\n\n";
+      message = message + "<font color=\'#778899\' size=2>【水果名称】 " + `${$.farmInfo.farmUserPro.name}` + "</font>\n\n";
+      message += "<font color=\'#778899\' size=2>【已兑换水果】" + `${$.farmInfo.farmUserPro.winTimes}` + "次</font>\n\n";
       that.log(`\n【动动账号${$.index}（${$.nickName || $.UserName}）的${$.name}好友互助码】${$.farmInfo.farmUserPro.shareCode}\n`);
       that.log(`\n【已成功兑换水果】${$.farmInfo.farmUserPro.winTimes}次\n`);
       await getHelp();
       await masterHelpShare();//助力好友
-       await setHelp();
+      await setHelp();
       if ($.farmInfo.treeState === 2 || $.farmInfo.treeState === 3) {
         option['open-url'] = urlSchema;
-        message = message + "<font color=\'#778899\' size=2> " +  $.UserName + "\n【提醒⏰】" + fruitName + "已可领取\n请去动动APP或微信小程序查看\n点击弹窗即达</font>"
+        message = message + "<font color=\'#778899\' size=2> " + $.UserName + "\n【提醒⏰】" + fruitName + "已可领取\n请去动动APP或微信小程序查看\n点击弹窗即达</font>"
         $.msg($.name, ``, `【动动账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去动动APP或微信小程序查看\n点击弹窗即达`, option);
         if ($.isNode()) {
           await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName}水果已可领取`, `【动动账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去动动APP或微信小程序查看`);
@@ -102,7 +102,7 @@ async function jdFruit() {
         //已下单购买, 但未开始种植新的水果
         option['open-url'] = urlSchema;
         $.msg($.name, ``, `【动动账号${$.index}】 ${$.nickName || $.UserName}\n【提醒⏰】您忘了种植新的水果\n请去动动APP或微信小程序选购并种植新的水果\n点击弹窗即达`, option);
-        message = message + "<font color=\'#778899\' size=2> " +  $.UserName + " \n【提醒⏰】您忘了种植新的水果\n请去动动APP或微信小程序选购并种植新的水果\n点击弹窗即达" + "</font>"
+        message = message + "<font color=\'#778899\' size=2> " + $.UserName + " \n【提醒⏰】您忘了种植新的水果\n请去动动APP或微信小程序选购并种植新的水果\n点击弹窗即达" + "</font>"
         if ($.isNode()) {
           await notify.sendNotify(`${$.name} - 您忘了种植新的水果`, `动动账号${$.index} ${$.nickName}\n【提醒⏰】您忘了种植新的水果\n请去动动APP或微信小程序选购并种植新的水果`);
         }
@@ -123,7 +123,7 @@ async function jdFruit() {
     }
   } catch (e) {
     that.log(`任务执行异常，请检查执行日志 ‼️‼️`);
-    message = message + "<font color=\'#778899\' size=2> " +  `任务执行异常，请检查执行日志 ‼️‼️` + e +  "</font>\n\n";
+    message = message + "<font color=\'#778899\' size=2> " + `任务执行异常，请检查执行日志 ‼️‼️` + e + "</font>\n\n";
     $.logErr(e);
   }
   await showMsg();
@@ -233,12 +233,12 @@ async function predictionFruit() {
   await initForFarm();
   await taskInitForFarm();
   let waterEveryDayT = $.farmTask.totalWaterTaskInit.totalWaterTaskTimes;//今天到到目前为止，浇了多少次水
-    message +=  "<font color=\'#778899\' size=2>【今日共浇水】" + `${waterEveryDayT}` + "次 </font>\n\n"
-    message += "<font color=\'#778899\' size=2>【剩余 水滴】" + `${$.farmInfo.farmUserPro.totalEnergy}` + "g💧 </font> \n\n"
-    message += "<font color=\'#BA55D3\' size=2>【水果🍉进度】" + `${(($.farmInfo.farmUserPro.treeEnergy /
-    $.farmInfo.farmUserPro.treeTotalEnergy) * 100).toFixed(2)}` + "%，已浇水" +`${$.farmInfo.farmUserPro.treeEnergy / 10}` + "次,还需"+`${($.farmInfo.farmUserPro.treeTotalEnergy - $.farmInfo.farmUserPro.treeEnergy) / 10}` +"次 </font> \n\n"
+  message += "<font color=\'#778899\' size=2>【今日共浇水】" + `${waterEveryDayT}` + "次 </font>\n\n"
+  message += "<font color=\'#778899\' size=2>【剩余 水滴】" + `${$.farmInfo.farmUserPro.totalEnergy}` + "g💧 </font> \n\n"
+  message += "<font color=\'#BA55D3\' size=2>【水果🍉进度】" + `${(($.farmInfo.farmUserPro.treeEnergy /
+    $.farmInfo.farmUserPro.treeTotalEnergy) * 100).toFixed(2)}` + "%，已浇水" + `${$.farmInfo.farmUserPro.treeEnergy / 10}` + "次,还需" + `${($.farmInfo.farmUserPro.treeTotalEnergy - $.farmInfo.farmUserPro.treeEnergy) / 10}` + "次 </font> \n\n"
   if ($.farmInfo.toFlowTimes > ($.farmInfo.farmUserPro.treeEnergy / 10)) {
-    message += "<font color=\'#BA55D3\' size=2>【水果🍉进度】" + `【开花进度】再浇水${$.farmInfo.toFlowTimes - $.farmInfo.farmUserPro.treeEnergy / 10}次开花\n\n` +"</font>\n\n"
+    message += "<font color=\'#BA55D3\' size=2>【水果🍉进度】" + `【开花进度】再浇水${$.farmInfo.toFlowTimes - $.farmInfo.farmUserPro.treeEnergy / 10}次开花\n\n` + "</font>\n\n"
   } else if ($.farmInfo.toFruitTimes > ($.farmInfo.farmUserPro.treeEnergy / 10)) {
     message += "<font color=\'#BA55D3\' size=2>【水果🍉进度】" + `【结果进度】再浇水${$.farmInfo.toFruitTimes - $.farmInfo.farmUserPro.treeEnergy / 10}次结果\n\n` + "</font>\n\n"
   }
@@ -247,7 +247,7 @@ async function predictionFruit() {
 
   let waterD = Math.ceil(waterTotalT / waterEveryDayT);
 
-  message = message + "<font color=\'#BA55D3\' size=2>" + `【预测】${waterD === 1 ? '明天' : waterD === 2 ? '后天' : waterD + '天之后'}(${timeFormat(24 * 60 * 60 * 1000 * waterD + Date.now())}日)可兑换水果🍉` +"</font>\n\n";
+  message = message + "<font color=\'#BA55D3\' size=2>" + `【预测】${waterD === 1 ? '明天' : waterD === 2 ? '后天' : waterD + '天之后'}(${timeFormat(24 * 60 * 60 * 1000 * waterD + Date.now())}日)可兑换水果🍉` + "</font>\n\n";
 }
 //浇水十次
 async function doTenWater() {
@@ -256,7 +256,7 @@ async function doTenWater() {
     jdFruitBeanCard = process.env.FRUIT_BEAN_CARD;
   }
   await myCardInfoForFarm();
-  const { fastCard, doubleCard, beanCard, signCard  } = $.myCardInfoRes;
+  const { fastCard, doubleCard, beanCard, signCard } = $.myCardInfoRes;
   if (`${jdFruitBeanCard}` === 'true' && JSON.stringify($.myCardInfoRes).match(`限时翻倍`) && beanCard > 0) {
     that.log(`您设置的是使用水滴换豆卡，且背包有水滴换豆卡${beanCard}张, 跳过10次浇水任务`)
     return
@@ -338,11 +338,11 @@ async function getTenWaterAward() {
 async function doTenWaterAgain() {
   that.log('开始检查剩余水滴能否再次浇水再次浇水\n');
   await initForFarm();
-  let totalEnergy  = $.farmInfo.farmUserPro.totalEnergy;
+  let totalEnergy = $.farmInfo.farmUserPro.totalEnergy;
   that.log(`剩余水滴${totalEnergy}g\n`);
   await myCardInfoForFarm();
-  const { fastCard, doubleCard, beanCard, signCard  } = $.myCardInfoRes;
-  that.log(`背包已有道具:\n快速浇水卡:${fastCard === -1 ? '未解锁': fastCard + '张'}\n水滴翻倍卡:${doubleCard === -1 ? '未解锁': doubleCard + '张'}\n水滴换京豆卡:${beanCard === -1 ? '未解锁' : beanCard + '张'}\n加签卡:${signCard === -1 ? '未解锁' : signCard + '张'}\n`)
+  const { fastCard, doubleCard, beanCard, signCard } = $.myCardInfoRes;
+  that.log(`背包已有道具:\n快速浇水卡:${fastCard === -1 ? '未解锁' : fastCard + '张'}\n水滴翻倍卡:${doubleCard === -1 ? '未解锁' : doubleCard + '张'}\n水滴换京豆卡:${beanCard === -1 ? '未解锁' : beanCard + '张'}\n加签卡:${signCard === -1 ? '未解锁' : signCard + '张'}\n`)
   if (totalEnergy >= 100 && doubleCard > 0) {
     //使用翻倍水滴卡
     for (let i = 0; i < new Array(doubleCard).fill('').length; i++) {
@@ -372,7 +372,7 @@ async function doTenWaterAgain() {
       await userMyCardForFarm('beanCard');
       that.log(`使用水滴换豆卡结果:${JSON.stringify($.userMyCardRes)}`);
       if ($.userMyCardRes.code === '0') {
-        message +="<font color=\'#BA55D3\' size=2>【水果🍉进度】" + `【水滴换豆卡】获得${$.userMyCardRes.beanCount}个京豆\n` + "</font>\n\n";
+        message += "<font color=\'#BA55D3\' size=2>【水果🍉进度】" + `【水滴换豆卡】获得${$.userMyCardRes.beanCount}个京豆\n` + "</font>\n\n";
         return
       }
     } else {
@@ -487,11 +487,11 @@ async function turntableFarm() {
   await initForTurntableFarm();
   if ($.initForTurntableFarmRes.code === '0') {
     //领取定时奖励 //4小时一次
-    let {timingIntervalHours, timingLastSysTime, sysTime, timingGotStatus, remainLotteryTimes, turntableInfos} = $.initForTurntableFarmRes;
+    let { timingIntervalHours, timingLastSysTime, sysTime, timingGotStatus, remainLotteryTimes, turntableInfos } = $.initForTurntableFarmRes;
 
     if (!timingGotStatus) {
-      that.log(`是否到了领取免费赠送的抽奖机会----${sysTime > (timingLastSysTime + 60*60*timingIntervalHours*1000)}`)
-      if (sysTime > (timingLastSysTime + 60*60*timingIntervalHours*1000)) {
+      that.log(`是否到了领取免费赠送的抽奖机会----${sysTime > (timingLastSysTime + 60 * 60 * timingIntervalHours * 1000)}`)
+      if (sysTime > (timingLastSysTime + 60 * 60 * timingIntervalHours * 1000)) {
         await timingAwardForTurntableFarm();
         that.log(`领取定时奖励结果${JSON.stringify($.timingAwardRes)}`);
         await initForTurntableFarm();
@@ -570,7 +570,7 @@ async function turntableFarm() {
         that.log(`【天天抽奖】${lotteryResult.substr(0, lotteryResult.length - 1)}\n`)
         // message += `【天天抽奖】${lotteryResult.substr(0, lotteryResult.length - 1)}\n`;
       }
-    }  else {
+    } else {
       that.log('天天抽奖--抽奖机会为0次')
     }
   } else {
@@ -609,70 +609,70 @@ async function getExtraAward() {
         let time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getMinutes();
         that.log(`\n动动昵称【${item.nickName || "匿名用户"}】 在 ${time} 给您助过力\n`);
       })
-      message += "<font color=\'#778899\' size=2>【助力您的好友】 " + `${str}` +  "</font>\n\n"
+      message += "<font color=\'#778899\' size=2>【助力您的好友】 " + `${str}` + "</font>\n\n"
     }
     that.log('领取额外奖励水滴结束\n');
   }
 }
 
 function getHelp() {
-        newShareCodes = [];
-        return new Promise(resolve => {
-            $.get({
-                url: "http://api.tyh52.com/act/get/jd_fruit/3"
-            }, (err, resp, data) => {
-                try {
-                    if (data) {
-                        data = JSON.parse(data);
-                        if (data.code == 1) {
-                            let list = data.data;
-                            if (!(list instanceof Array)) {
-                                list = JSON.parse(list);
-                            }
-                            if (list.length > 0) {
-                                for (var i in list) {
-                                    newShareCodes.push(list[i]);
-                                }
-                            }
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            })
-        });
-    }
-
-    function setHelp() {
-        return new Promise(resolve => {
-            if ($.farmInfo.farmUserPro.shareCode) {
-                $.get({
-                    url: "http://api.tyh52.com/act/set/jd_fruit/" + $.farmInfo.farmUserPro.shareCode
-                }, (err, resp, data) => {
-                    try {
-                        if (data) {
-                            data = JSON.parse(data);
-                            if (data.code == 1) {
-                                that.log("提交自己的邀請碼成功");
-                            } else {
-                                that.log("提交邀请码失败，" + data.message);
-                            }
-                        }
-                    } catch (e) {
-                        $.logErr(e, resp);
-                    } finally {
-                        resolve(data);
-                    }
-                })
-            } else {
-                resolve();
+  newShareCodes = [];
+  return new Promise(resolve => {
+    $.get({
+      url: "http://api.tyh52.com/act/get/jd_fruit/3"
+    }, (err, resp, data) => {
+      try {
+        if (data) {
+          data = JSON.parse(data);
+          if (data.code == 1) {
+            let list = data.data;
+            if (!(list instanceof Array)) {
+              list = JSON.parse(list);
             }
+            if (list.length > 0) {
+              for (var i in list) {
+                newShareCodes.push(list[i]);
+              }
+            }
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp);
+      } finally {
+        resolve(data);
+      }
+    })
+  });
+}
 
-        });
+function setHelp() {
+  return new Promise(resolve => {
+    if ($.farmInfo.farmUserPro.shareCode) {
+      $.get({
+        url: "http://api.tyh52.com/act/set/jd_fruit/" + $.farmInfo.farmUserPro.shareCode
+      }, (err, resp, data) => {
+        try {
+          if (data) {
+            data = JSON.parse(data);
+            if (data.code == 1) {
+              that.log("提交自己的邀請碼成功");
+            } else {
+              that.log("提交邀请码失败，" + data.message);
+            }
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
+        }
+      })
+    } else {
+      resolve();
     }
-    
+
+  });
+}
+
 //助力好友
 async function masterHelpShare() {
   that.log('开始助力好友')
@@ -831,7 +831,7 @@ async function getAwardInviteFriend() {
     if ($.friendList.friends && $.friendList.friends.length > 0) {
       for (let friend of $.friendList.friends) {
         that.log(`\n开始删除好友 [${friend.shareCode}]`);
-        const deleteFriendForFarm = await request('deleteFriendForFarm', { "shareCode": `${friend.shareCode}`,"version":8,"channel":1 });
+        const deleteFriendForFarm = await request('deleteFriendForFarm', { "shareCode": `${friend.shareCode}`, "version": 8, "channel": 1 });
         if (deleteFriendForFarm && deleteFriendForFarm.code === '0') {
           that.log(`删除好友 [${friend.shareCode}] 成功\n`);
         }
@@ -871,11 +871,11 @@ async function doFriendsWater() {
       //TODO ,发现bug,github action运行发现有些账号第一次没有给3个好友浇水
       that.log(`需要浇水的好友列表shareCodes:${JSON.stringify(needWaterFriends)}`);
       let waterFriendsCount = 0, cardInfoStr = '';
-      for (let index = 0; index < needWaterFriends.length; index ++) {
+      for (let index = 0; index < needWaterFriends.length; index++) {
         await waterFriendForFarm(needWaterFriends[index]);
-        that.log(`为第${index+1}个好友浇水结果:${JSON.stringify($.waterFriendForFarmRes)}\n`)
+        that.log(`为第${index + 1}个好友浇水结果:${JSON.stringify($.waterFriendForFarmRes)}\n`)
         if ($.waterFriendForFarmRes.code === '0') {
-          waterFriendsCount ++;
+          waterFriendsCount++;
           if ($.waterFriendForFarmRes.cardInfo) {
             that.log('为好友浇水获得道具了');
             if ($.waterFriendForFarmRes.cardInfo.type === 'beanCard') {
@@ -982,7 +982,7 @@ async function duck() {
 //鸭子，点我有惊喜
 async function getFullCollectionReward() {
   return new Promise(resolve => {
-    const body = {"type": 2, "version": 6, "channel": 2};
+    const body = { "type": 2, "version": 6, "channel": 2 };
     $.post(taskUrl("getFullCollectionReward", body), (err, resp, data) => {
       try {
         if (err) {
@@ -1018,17 +1018,17 @@ async function firstWaterTaskForFarm() {
 //领取给3个好友浇水后的奖励水滴API
 async function waterFriendGotAwardForFarm() {
   const functionId = 'waterFriendGotAwardForFarm';
-  $.waterFriendGotAwardRes = await request(functionId, {"version": 4, "channel": 1});
+  $.waterFriendGotAwardRes = await request(functionId, { "version": 4, "channel": 1 });
 }
 // 查询背包道具卡API
 async function myCardInfoForFarm() {
   const functionId = 'myCardInfoForFarm';
-  $.myCardInfoRes = await request(functionId, {"version": 5, "channel": 1});
+  $.myCardInfoRes = await request(functionId, { "version": 5, "channel": 1 });
 }
 //使用道具卡API
 async function userMyCardForFarm(cardType) {
   const functionId = 'userMyCardForFarm';
-  $.userMyCardRes = await request(functionId, {"cardType": cardType});
+  $.userMyCardRes = await request(functionId, { "cardType": cardType });
 }
 /**
  * 领取浇水过程中的阶段性奖励
@@ -1036,7 +1036,7 @@ async function userMyCardForFarm(cardType) {
  * @returns {Promise<void>}
  */
 async function gotStageAwardForFarm(type) {
-  $.gotStageAwardForFarmRes = await request('gotStageAwardForFarm', {'type': type});
+  $.gotStageAwardForFarmRes = await request('gotStageAwardForFarm', { 'type': type });
 }
 //浇水API
 async function waterGoodForFarm() {
@@ -1048,16 +1048,16 @@ async function waterGoodForFarm() {
 }
 // 初始化集卡抽奖活动数据API
 async function initForTurntableFarm() {
-  $.initForTurntableFarmRes = await request('initForTurntableFarm', {version: 4, channel: 1});
+  $.initForTurntableFarmRes = await request('initForTurntableFarm', { version: 4, channel: 1 });
 }
 async function lotteryForTurntableFarm() {
   await $.wait(2000);
   that.log('等待了2秒');
-  $.lotteryRes = await request('lotteryForTurntableFarm', {type: 1, version: 4, channel: 1});
+  $.lotteryRes = await request('lotteryForTurntableFarm', { type: 1, version: 4, channel: 1 });
 }
 
 async function timingAwardForTurntableFarm() {
-  $.timingAwardRes = await request('timingAwardForTurntableFarm', {version: 4, channel: 1});
+  $.timingAwardRes = await request('timingAwardForTurntableFarm', { version: 4, channel: 1 });
 }
 
 async function browserForTurntableFarm(type, adId) {
@@ -1067,13 +1067,13 @@ async function browserForTurntableFarm(type, adId) {
   if (type === 2) {
     that.log('天天抽奖浏览任务领取水滴');
   }
-  const body = {"type": type,"adId": adId,"version":4,"channel":1};
+  const body = { "type": type, "adId": adId, "version": 4, "channel": 1 };
   $.browserForTurntableFarmRes = await request('browserForTurntableFarm', body);
   // 浏览爆品会场8秒
 }
 //天天抽奖浏览任务领取水滴API
 async function browserForTurntableFarm2(type) {
-  const body = {"type":2,"adId": type,"version":4,"channel":1};
+  const body = { "type": 2, "adId": type, "version": 4, "channel": 1 };
   $.browserForTurntableFarm2Res = await request('browserForTurntableFarm', body);
 }
 /**
@@ -1126,7 +1126,7 @@ async function masterHelp() {
  */
 async function waterRainForFarm() {
   const functionId = 'waterRainForFarm';
-  const body = {"type": 1, "hongBaoTimes": 100, "version": 3};
+  const body = { "type": 1, "hongBaoTimes": 100, "version": 3 };
   $.waterRain = await request(functionId, body);
 }
 /**
@@ -1140,7 +1140,7 @@ async function clockInInitForFarm() {
 // 连续签到API
 async function clockInForFarm() {
   const functionId = 'clockInForFarm';
-  $.clockInForFarmRes = await request(functionId, {"type": 1});
+  $.clockInForFarmRes = await request(functionId, { "type": 1 });
 }
 
 //关注，领券等API
@@ -1168,12 +1168,12 @@ async function clockInFollowForFarm(id, type, step) {
 
 // 领取连续签到7天的惊喜礼包API
 async function gotClockInGift() {
-  $.gotClockInGiftRes = await request('clockInForFarm', {"type": 2})
+  $.gotClockInGiftRes = await request('clockInForFarm', { "type": 2 })
 }
 
 //定时领水API
 async function gotThreeMealForFarm() {
-  const functionId ='gotThreeMealForFarm';
+  const functionId = 'gotThreeMealForFarm';
   $.threeMeal = await request(functionId);
 }
 /**
@@ -1184,14 +1184,14 @@ async function gotThreeMealForFarm() {
 async function browseAdTaskForFarm(advertId, type) {
   const functionId = 'browseAdTaskForFarm';
   if (type === 0) {
-    $.browseResult = await request(functionId, {advertId, type});
+    $.browseResult = await request(functionId, { advertId, type });
   } else if (type === 1) {
-    $.browseRwardResult = await request(functionId, {advertId, type});
+    $.browseRwardResult = await request(functionId, { advertId, type });
   }
 }
 // 被水滴砸中API
 async function gotWaterGoalTaskForFarm() {
-  $.goalResult = await request('gotWaterGoalTaskForFarm', {type: 3});
+  $.goalResult = await request('gotWaterGoalTaskForFarm', { type: 3 });
 }
 //签到API
 async function signForFarm() {
@@ -1203,9 +1203,9 @@ async function signForFarm() {
  */
 async function initForFarm() {
   return new Promise(resolve => {
-    const option =  {
+    const option = {
       url: `${JD_API_HOST}?functionId=initForFarm`,
-      body: `body=${escape(JSON.stringify({"version":4}))}&appid=wh5&clientVersion=9.1.0`,
+      body: `body=${escape(JSON.stringify({ "version": 4 }))}&appid=wh5&clientVersion=9.1.0`,
       headers: {
         "accept": "*/*",
         "accept-encoding": "gzip, deflate, br",
@@ -1251,7 +1251,7 @@ async function taskInitForFarm() {
 }
 //获取好友列表API
 async function friendListInitForFarm() {
-  $.friendList = await request('friendListInitForFarm', {"version": 4, "channel": 1});
+  $.friendList = await request('friendListInitForFarm', { "version": 4, "channel": 1 });
   // that.log('aa', aa);
 }
 // 领取邀请好友的奖励API
@@ -1260,7 +1260,7 @@ async function awardInviteFriendForFarm() {
 }
 //为好友浇水API
 async function waterFriendForFarm(shareCode) {
-  const body = {"shareCode": shareCode, "version": 6, "channel": 1}
+  const body = { "shareCode": shareCode, "version": 6, "channel": 1 }
   $.waterFriendForFarmRes = await request('waterFriendForFarm', body);
 }
 async function showMsg() {
@@ -1293,7 +1293,7 @@ function timeFormat(time) {
 }
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: `http://jd.turinglabs.net/api/v2/jd/farm/read/${randomCount}/`, timeout: 10000,}, (err, resp, data) => {
+    $.get({ url: `http://jd.turinglabs.net/api/v2/jd/farm/read/${randomCount}/`, timeout: 10000, }, (err, resp, data) => {
       try {
         if (err) {
           that.log(`${JSON.stringify(err)}`)
@@ -1348,7 +1348,7 @@ function requireConfig() {
           cookiesArr.push(jdCookieNode[item])
         }
       })
-      if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') that.log = () => {};
+      if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') that.log = () => { };
     } else {
       let cookiesData = $.getdata('CookiesJD') || "[]";
       cookiesData = jsonParse(cookiesData);
@@ -1403,7 +1403,7 @@ function TotalBean() {
     })
   })
 }
-function request(function_id, body = {}, timeout = 1000){
+function request(function_id, body = {}, timeout = 1000) {
   return new Promise(resolve => {
     setTimeout(() => {
       $.get(taskUrl(function_id, body), (err, resp, data) => {
@@ -1462,57 +1462,57 @@ function jsonParse(str) {
 
 //我加的函数
 function postToDingTalk(messgae) {
-    const message1 = "" + messgae
-    that.log(messgae)
+  const message1 = "" + messgae
+  that.log(messgae)
 
-    const body = {
-        "msgtype": "markdown",
-        "markdown": {
-            "title":"动动农场",
-            "text": message1
-        },
-        "at": {
-            "atMobiles": [],
-            "isAtAll": false
-        }
+  const body = {
+    "msgtype": "markdown",
+    "markdown": {
+      "title": "动动农场",
+      "text": message1
+    },
+    "at": {
+      "atMobiles": [],
+      "isAtAll": false
     }
+  }
 
 
-    $.post(toDingtalk(dingtalk,JSON.stringify(body)), (data,status,xhr)=>{
-        try {
-            that.log(resp)
-            that.log(data)
-            if (err) {
-                that.log(JSON.stringify(err));
-                $.logErr(err);
-            } else {
-                if (safeGet(data)) {
-                    $.duckRes = JSON.parse(data);
-                }
-            }
-        } catch (e) {
-            $.logErr(e, resp)
-        } finally {
-            resolve();
+  $.post(toDingtalk(dingtalk, JSON.stringify(body)), (data, status, xhr) => {
+    try {
+      that.log(resp)
+      that.log(data)
+      if (err) {
+        that.log(JSON.stringify(err));
+        $.logErr(err);
+      } else {
+        if (safeGet(data)) {
+          $.duckRes = JSON.parse(data);
         }
-    },"json")
+      }
+    } catch (e) {
+      $.logErr(e, resp)
+    } finally {
+      resolve();
+    }
+  }, "json")
 }
 
 
 function toDingtalk(urlmain, bodyMain) {
-    return {
-        url: urlmain,
-        body:bodyMain,
-        headers: { 'Content-Type': 'application/json;charset=utf-8' },
-        timeout: 10000,
-    }
+  return {
+    url: urlmain,
+    body: bodyMain,
+    headers: { 'Content-Type': 'application/json;charset=utf-8' },
+    timeout: 10000,
+  }
 }
 
-function getPic(){
-    let code = ["1.gif","2.png","3.png","4.png","5.gif","6.gif","7.gif","8.gif","9.gif","10.png","11.png"]
-    let address = "\n\n ![screenshot](https://cdn.jsdelivr.net/gh/selfImprHuang/Go-Tool@v1.2/test/emptyDirTest/3/"
+function getPic() {
+  let code = ["1.gif", "2.png", "3.png", "4.png", "5.gif", "6.gif", "7.gif", "8.gif", "9.gif", "10.png", "11.png"]
+  let address = "\n\n ![screenshot](https://cdn.jsdelivr.net/gh/selfImprHuang/Go-Tool@v1.2/test/emptyDirTest/3/"
 
-       pos = parseInt(11*Math.random())
-    address = address + code[pos] + ")"
-    return address
+  pos = parseInt(11 * Math.random())
+  address = address + code[pos] + ")"
+  return address
 }
