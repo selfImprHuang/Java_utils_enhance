@@ -137,12 +137,24 @@ let args_xh = {
           await $.notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
           continue
         }
+		
+		
+		//下一个要重新去拉列表
+		trialActivityIdList = []
+		trialActivityTitleList = []
 
+		args_xh.listCount = 0
+		postToDingTalk(message)
+		message = ""
+		totalPages == 999999
+		
         username = $.UserName
         //走另外的途径另外处理
         if ($.UserName == "jd_66ea783827d30" || $.UserName == "jd_45d917547c763") {
           getManName = roleMap[username]
-          justGetGain()
+            message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" + username + " </font> </font> \n\n "
+			await try_MyTrials(1, 2)    //申请成功的商品
+			await showMsg()
           continue
         }
  
@@ -234,21 +246,6 @@ let args_xh = {
 }).finally(() => {
   $.done()
 })
-
-
-function justGetGain() {
-  message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" + username + " </font> </font> \n\n "
-  try_MyTrials(1, 2)    //申请成功的商品
-  showMsg()
-  //下一个要重新去拉列表
-  trialActivityIdList = []
-  trialActivityTitleList = []
-
-  args_xh.listCount = 0
-  postToDingTalk(message)
-  message = ""
-  totalPages == 999999
-}
 
 function getList() {
   for (i = 0; i < Math.floor(Math.random() * (5001) + 500); i++) {
