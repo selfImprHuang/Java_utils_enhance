@@ -1259,8 +1259,8 @@ function postToDingTalk2(messgae) {
   const body = {
     "msgtype": "markdown",
     "markdown": {
-      "title": "随机试用(待领取)",
-      "text": message1
+      "title": "中奖查询",
+      "text": "中奖查询\n\n" + message1
     },
     "at": {
       "atMobiles": [],
