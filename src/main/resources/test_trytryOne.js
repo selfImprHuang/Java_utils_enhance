@@ -193,7 +193,7 @@ let args_xh = {
             console.log(`\n正在进行第 ${size} 次获取试用商品\n`)
             console.log(`\n当前产品页面总长度为${totalPages} 页\n`)
             await try_feedsList(list[i], size++)
-            if (m == 0 && sensMessage.length > wordLength) {
+            if (m == 1 && sensMessage.length > wordLength) {
               console.log("-----------------------------------")
               console.log("-----------------------------------")
               console.log("-----------------------------------")
@@ -348,6 +348,9 @@ function try_feedsList(tabId, page) {
                       } else if (parseFloat(data.data.feedList[i].applyNum) > args_xh.applyNumFilter && data.data.feedList[i].applyNum !== null) {
                         console.log(`商品被过滤，已申请试用人数大于预设人数 \n`)
                       } else if (parseFloat(data.data.feedList[i].trialPrice) > args_xh.trialPrice && data.data.feedList[i].jdPrice < minItemValue) {
+                        sensMessage += "<font color=\'#FF0000\' size=2>" + data.data.feedList[i].skuTitle + "</font> </font> \n\n"
+                        sensMessage += "<font color=\'#FF0000\' size=2>" + "需要花费:" +parseFloat(data.data.feedList[i].trialPrice) + "</font> </font> \n\n"
+                        sensMessage += "<font color=\'#FF0000\' size=2>" + "实际价值:" +parseFloat(data.data.feedList[i].jdPrice) + "</font> </font> \n\n"
                         console.log(`商品被过滤，期待价格高于预设价格 \n`)
                       } else if (args_xh.titleFilters.some(fileter_word => data.data.feedList[i].skuTitle.includes(fileter_word))) {
                         sensMessage += "<font color=\'#FF0000\' size=2>" + data.data.feedList[i].skuTitle + "</font> </font> \n\n"
@@ -484,7 +487,7 @@ function try_MyTrials(page, selected) {
                   message += "<font color=\'#4B0082\' size=1>" + `-----\n\n` + "</font>\n\n"
                   count++
                 }
-                if (item.text.text == '试用资格将保留10天') {
+                if (item.text.text.includes('试用资格将保留10天')) {
                   message1 = "<font color=\'#4B0082\' size=1>" + `${getManName},你的商品待领取,请尽快领取` + "</font>\n\n"
                   message1 += "<font color=\'#4B0082\' size=1>" + `申请商品：${item.trialName}` + "</font>\n\n"
                   message1 += "<font color=\'#4B0082\' size=1>" + `剩余时间：${remaining(item.leftTime)}` + "</font>\n\n"
@@ -1188,7 +1191,7 @@ function postToDingTalk(messgae) {
     },
     "at": {
       "atMobiles": [],
-      "isAtAll": true
+      "isAtAll": false
     }
   }
 
