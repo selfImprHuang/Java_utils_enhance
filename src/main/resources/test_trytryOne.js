@@ -238,8 +238,8 @@ let args_xh = {
 
 function justGetGain() {
   message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" + username + " </font> </font> \n\n "
-  await try_MyTrials(1, 2)    //申请成功的商品
-  await showMsg()
+  try_MyTrials(1, 2)    //申请成功的商品
+  showMsg()
   //下一个要重新去拉列表
   trialActivityIdList = []
   trialActivityTitleList = []
