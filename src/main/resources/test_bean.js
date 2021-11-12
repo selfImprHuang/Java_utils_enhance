@@ -30,8 +30,8 @@ let postTime = 11
 let postDay = 1 
 let cookiesArr = [], cookie = '', jdPlantBeanShareArr = [], isBox = false, notify, newShareCodes, option, subTitle;
 let message = ""
-let dingtalk1 = "https://oapi.dingtalk.com/robot/send?access_token=18444b555747aad3381bc1d1e3dea72b03158e152a846f818d82a1ca946bd430"
-let dingtalk2 = "https://oapi.dingtalk.com/robot/send?access_token=04ab95f07aa0397e7167c6ea3a331bc7fcddbc4cda4a482b1e7e76755f97f6a0"
+let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=18444b555747aad3381bc1d1e3dea72b03158e152a846f818d82a1ca946bd430"
+let dingtalk1 = "https://oapi.dingtalk.com/robot/send?access_token=04ab95f07aa0397e7167c6ea3a331bc7fcddbc4cda4a482b1e7e76755f97f6a0"
 let roleMap = {
   "jd_4521b375ebb5d": "锟子怪",
   "jd_542c10c0222bc": "康子怪",
@@ -110,10 +110,10 @@ let num;
   $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
 }).finally(() => {
   that.log(message)
-  postToDingTalk(message,dingtalk1)
+  postToDingTalk(message)
   date  = new Date()
   if (date.getDay() == postDay && date.getHours() == postTime) {
-    postToDingTalk(message,dingtalk2)
+    postToDingTalk1(message)
   }
 
   $.done();
@@ -794,7 +794,7 @@ function Env(t, e) { "undefined" != typeof process && JSON.stringify(process.env
 
 
 //我加的函数
-function postToDingTalk(messgae,dingtalk) {
+function postToDingTalk(messgae) {
   const message1 = "" + messgae
   that.log(messgae)
 
@@ -812,6 +812,43 @@ function postToDingTalk(messgae,dingtalk) {
 
 
   $.post(toDingtalk(dingtalk , JSON.stringify(body)), (data, status, xhr) => {
+    try {
+      that.log(resp)
+      that.log(data)
+      if (err) {
+        that.log(JSON.stringify(err));
+        $.logErr(err);
+      } else {
+        if (safeGet(data)) {
+          $.duckRes = JSON.parse(data);
+        }
+      }
+    } catch (e) {
+      $.logErr(e, resp)
+    } finally {
+      resolve();
+    }
+  }, "json")
+}
+
+function postToDingTalk1(messgae) {
+  const message1 = "" + messgae
+  that.log(messgae)
+
+  const body = {
+    "msgtype": "markdown",
+    "markdown": {
+      "title": "种豆得豆",
+      "text": message1
+    },
+    "at": {
+      "atMobiles": [],
+      "isAtAll": false
+    }
+  }
+
+
+  $.post(toDingtalk(dingtalk1 , JSON.stringify(body)), (data, status, xhr) => {
     try {
       that.log(resp)
       that.log(data)

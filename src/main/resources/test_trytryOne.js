@@ -477,7 +477,7 @@ function try_MyTrials(page, selected) {
                   count++
                 }
                 if (item.text.text.includes('试用资格将保留10天')) {
-                  message1 = "<font color=\'#8552a1\' size=1>" + `${getManName}` + "</font>\n\n"
+                  message1 = "<font color=\'#8552a1\' size=1>" + getManName + "</font>\n\n"
                   message1 = "<font color=\'#4B0082\' size=1>" + `,你的商品待领取,请尽快领取` + "</font>\n\n"
                   message1 += "<font color=\'#ef5b9c\' size=1>" + `成功获取：${item.trialName}` + "</font>\n\n"
                   message1 += "<font color=\'#4B0082\' size=1>" + `剩余时间：${remaining(item.leftTime)}` + "</font>\n\n"
