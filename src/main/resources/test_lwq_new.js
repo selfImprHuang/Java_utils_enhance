@@ -2,9 +2,11 @@
 cron "30 10,22 * * *" jd_bean_change.js, tag:资产变化强化版by-ccwav
 */
 let roleMap = {
-    "好吧好吧5577":"wq_好吧好吧5577",
+    "好吧好吧5577":"wq_18797925088",
     "jd_qapvwBDaRqgW":"wgh_19970291531",
-    "18070420956_p":"刘吴奇",
+    "18070420956_p":"刘吴奇_13380353522", 
+  "羊爱咩咩":"yxb_15390868558",
+"18709853042_p":"wzx_18709853042",
 }
 
 let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
