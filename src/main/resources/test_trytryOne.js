@@ -18,7 +18,7 @@
  * 请提前取关至少250个商店确保京东试用脚本正常运行
  * 没有写通知，是否申请成功没有进行通知，但脚本会把状态log出日志
  */
-
+let showDate = [0,1,12,13,17,18]
 let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
 let dingtalk1 = "https://oapi.dingtalk.com/robot/send?access_token=a3e80da6f064321881fc38e43a07bfde7a61b6f18245454520fb749556cebfcd"
 let dingtalk2 = "https://oapi.dingtalk.com/robot/send?access_token=1832f969da101ef8273e8ba2258f06f15ec34bc22282066b28ab617042a7a9b6"
@@ -476,7 +476,8 @@ function try_MyTrials(page, selected) {
                   message += "<font color=\'#4B0082\' size=1>" + `-----\n\n` + "</font>\n\n"
                   count++
                 }
-                if (item.text.text.includes('试用资格将保留10天')) {
+                date = new Date()
+                if (item.text.text.includes('试用资格将保留10天') && showDate.includes(date.getHours())) {
                   message1 = "<font color=\'##130c0e\' size=3>" + getManName + "</font>"
                   message1 += "<font color=\'#4B0082\' size=1>" + `,你的商品待领取,请尽快领取` + "</font>\n\n"
                   message1 += "<font color=\'#ef5b9c\' size=1>" + `成功获取：${item.trialName}` + "</font>\n\n"

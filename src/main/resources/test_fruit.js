@@ -570,11 +570,11 @@ async function turntableFarm() {
             // that.log('天天抽奖助力结果',lotteryMasterHelpRes.helpResult)
             if ($.lotteryMasterHelpRes.helpResult.code === '0') {
                 that.log(`天天抽奖-助力${$.lotteryMasterHelpRes.helpResult.masterUserInfo.nickName}成功\n`)
-            } else if ($.lotteryMasterHelpRes.helpResult.code === '11') {
-                that.log(`天天抽奖-不要重复助力${$.lotteryMasterHelpRes.helpResult.masterUserInfo.nickName}\n`)
             } else if ($.lotteryMasterHelpRes.helpResult.code === '13') {
                 that.log(`天天抽奖-助力${$.lotteryMasterHelpRes.helpResult.masterUserInfo.nickName}失败,助力次数耗尽\n`);
                 break;
+            } else if ($.lotteryMasterHelpRes.helpResult.code === '11') {
+                that.log(`天天抽奖-不要重复助力${$.lotteryMasterHelpRes.helpResult.masterUserInfo.nickName}\n`)
             }
         }
         that.log(`---天天抽奖次数remainLotteryTimes----${remainLotteryTimes}次`)
