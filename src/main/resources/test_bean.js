@@ -1,3 +1,4 @@
+
 /*
 种豆得豆 脚本更新地址：https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_plantBean.js
 更新时间：2021-04-9
@@ -96,8 +97,19 @@ let num;
       await jdPlantBean();
       await showMsg();
     }
+    message += "----\n\n"
   }
 
+
+  that.log(message)
+  postToDingTalk(message)
+  date = new Date()
+  if (date.getDay() == postDay && date.getHours() == postTime) {
+    postToDingTalk1(message)
+  }
+
+  message= "" 
+  message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>种豆得豆</font> \n\n --- \n\n"
 
   //开始互助
   for (let i = 0; i < cookiesArr.length; i++) {
@@ -154,13 +166,7 @@ let num;
   message += "<font color=\'#778899\' size=2> " + `❌ ${$.name}, 失败! 原因: ${e}!` + "</font>\n\n"
   $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
 }).finally(() => {
-  that.log(message)
   postToDingTalk(message)
-  date = new Date()
-  if (date.getDay() == postDay && date.getHours() == postTime) {
-    postToDingTalk1(message)
-  }
-
   $.done();
 })
 
@@ -489,6 +495,7 @@ async function doHelp() {
       if ($.helpResult.data.helpShareRes) {
         if ($.helpResult.data.helpShareRes.state === '1') {
           console.log(`助力好友${plantUuid}成功`)
+          message = message + "<font color=\'#778899\' size=2>  "+  `助力好友${plantUuid}成功` +" </font> </font> \n\n "
           console.log(`${$.helpResult.data.helpShareRes.promptText}\n`);
         } else if ($.helpResult.data.helpShareRes.state === '2') {
           console.log('您今日助力的机会已耗尽，已不能再帮助好友助力了\n');
@@ -669,17 +676,17 @@ function requireConfig() {
       cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
     }
     console.log(`共${cookiesArr.length}个动动账号\n`)
-    $.shareCodesArr = [];
-    if ($.isNode()) {
-      Object.keys(jdPlantBeanShareCodes).forEach((item) => {
-        if (jdPlantBeanShareCodes[item]) {
-          $.shareCodesArr.push(jdPlantBeanShareCodes[item])
-        }
-      })
-    } else {
-      if ($.getdata('jd_plantbean_inviter')) $.shareCodesArr = $.getdata('jd_plantbean_inviter').split('\n').filter(item => !!item);
-      console.log(`\nBoxJs设置的${$.name}好友邀请码:${$.getdata('jd_plantbean_inviter') ? $.getdata('jd_plantbean_inviter') : '暂无'}\n`);
-    }
+    // $.shareCodesArr = [];
+    // if ($.isNode()) {
+    //   Object.keys(jdPlantBeanShareCodes).forEach((item) => {
+    //     if (jdPlantBeanShareCodes[item]) {
+    //       $.shareCodesArr.push(jdPlantBeanShareCodes[item])
+    //     }
+    //   })
+    // } else {
+    //   if ($.getdata('jd_plantbean_inviter')) $.shareCodesArr = $.getdata('jd_plantbean_inviter').split('\n').filter(item => !!item);
+    //   console.log(`\nBoxJs设置的${$.name}好友邀请码:${$.getdata('jd_plantbean_inviter') ? $.getdata('jd_plantbean_inviter') : '暂无'}\n`);
+    // }
     // console.log(`\n种豆得豆助力码::${JSON.stringify($.shareCodesArr)}`);
     console.log(`您提供了${$.shareCodesArr.length}个账号的种豆得豆助力码\n`);
     resolve()

@@ -1,4 +1,5 @@
-let cookiesArr = [], cookie = '', jdFruitShareArr = [], isBox = false, notify, newShareCodes;
+let cookiesArr = [], cookie = '', jdFruitShareArr = [], isBox = false, notify;
+let newShareCodes = [];
 //助力好友分享码(最多4个,否则后面的助力失败),原因:动动农场每人每天只有四次助力机会
 //此此内容是IOS用户下载脚本到本地使用，填写互助码的地方，同一动动账号的好友互助码请使用@符号隔开。
 //下面给出两个账号的填写示例（iOS只支持2个动动账号）
@@ -72,25 +73,25 @@ const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%2
 
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
-          cookie = cookiesArr[i];
-          $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-          $.index = i + 1;
-          $.isLogin = true;
-          $.nickName = '';
-          await TotalBean();
-          console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
-          if (!$.isLogin) {
-            $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
-    
-            if ($.isNode()) {
-              await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
+            cookie = cookiesArr[i];
+            $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+            $.index = i + 1;
+            $.isLogin = true;
+            $.nickName = '';
+            await TotalBean();
+            console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
+            if (!$.isLogin) {
+                $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
+
+                if ($.isNode()) {
+                    await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
+                }
+                continue
             }
-            continue
-          }
-          await masterHelpShare();//助力好友
-          //互助 账号内部互助
+            await masterHelpShare();//助力好友
+            //互助 账号内部互助
         }
-      }
+    }
 
 
 })()
@@ -730,6 +731,7 @@ async function masterHelpShare() {
             if ($.helpResult.helpResult.code === '0') {
                 //助力成功
                 salveHelpAddWater += $.helpResult.helpResult.salveHelpAddWater;
+                message += "<font color=\'#FFA500\'>" + `【助力好友结果】: 已成功给【${$.helpResult.helpResult.masterUserInfo.nickName}】助力` + "</font> \n\n "
                 that.log(`【助力好友结果】: 已成功给【${$.helpResult.helpResult.masterUserInfo.nickName}】助力`);
                 that.log(`给好友【${$.helpResult.helpResult.masterUserInfo.nickName}】助力获得${$.helpResult.helpResult.salveHelpAddWater}g水滴`)
                 helpSuccessPeoples += ($.helpResult.helpResult.masterUserInfo.nickName || '匿名用户') + ',';

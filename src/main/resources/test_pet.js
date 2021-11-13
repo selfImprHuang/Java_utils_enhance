@@ -1,9 +1,10 @@
-let cookiesArr = [], cookie = '', jdPetShareArr = [], isBox = false, notify, newShareCodes, allMessage = '';
+let cookiesArr = [], cookie = '', jdPetShareArr = [], isBox = false, notify, allMessage = '';
 //助力好友分享码(最多5个,否则后面的助力失败),原因:动动农场每人每天只有四次助力机会
 //此此内容是IOS用户下载脚本到本地使用，填写互助码的地方，同一动动账号的好友互助码请使用@符号隔开。
 //下面给出两个账号的填写示例（iOS只支持2个动动账号）
 let shareCodes = [ // IOS本地脚本用户这个列表填入你要助力的好友的shareCode
 ]
+let newShareCodes = []
 let message = "", subTitle = '', option = {};
 let jdNotify = false;//是否关闭通知，false打开通知推送，true关闭通知推送
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
@@ -60,6 +61,12 @@ let postAddress = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38
     message += "----\n\n"
   }
 
+  
+  that.log(message)
+  postToDingTalk(message)
+  message = ""
+  message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>动动萌宠</font> \n\n --- \n\n"
+
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       await $.wait(5000);
@@ -84,6 +91,8 @@ let postAddress = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38
         if ($.isNode()) await notify.sendNotify(`${$.name}`, errMsg);
         $.msg($.name, '', `动动账号${$.index} ${$.nickName || $.UserName}\n${errMsg}`)
       }
+
+      message += "----\n\n"
     }
   }
 
@@ -93,7 +102,6 @@ let postAddress = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38
     $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
   })
   .finally(() => {
-    message += getPic()
     postToDingTalk(message)
     taht.log(message)
     $.done();
@@ -108,7 +116,7 @@ async function jdPet() {
       $.petInfo = initPetTownRes.result;
       if ($.petInfo.userStatus === 0) {
         // $.msg($.name, '', `【提示】动动账号${$.index}${$.nickName}\n萌宠活动未开启\n请手动去动动APP开启活动\n入口：我的->游戏与互动->查看更多开启`, { "open-url": "openapp.jdmoble://" });
-        await slaveHelp();//助力好友
+        // await slaveHelp();//助力好友
         message = message + "<font color=\'#778899\' size=2>" + "动动萌宠未开启\n请手动去动动APP开启活动\n入口：我的->游戏与互动->查看更多开启</font>\n\n"
         $.log($.name, '', `【提示】动动账号${$.index}${$.nickName}\n萌宠活动未开启\n请手动去动动APP开启活动\n入口：我的->游戏与互动->查看更多开启`);
         return
@@ -123,7 +131,7 @@ async function jdPet() {
       // option['media-url'] = goodsUrl;
       // that.log(`初始化萌宠信息完成: ${JSON.stringify(petInfo)}`);
       if ($.petInfo.petStatus === 5) {
-        await slaveHelp();//可以兑换而没有去兑换,也能继续助力好友
+        // await slaveHelp();//可以兑换而没有去兑换,也能继续助力好友
         option['open-url'] = "openApp.jdMobile://";
         message = message + "<font color=\'#778899\' size=2>" + `【提醒⏰】${$.petInfo.goodsInfo.goodsName}已可领取`, '请去动动APP或微信小程序查看' + "</font>\n\n"
         $.msg($.name, `【提醒⏰】${$.petInfo.goodsInfo.goodsName}已可领取`, '请去动动APP或微信小程序查看', option);
@@ -132,7 +140,7 @@ async function jdPet() {
         }
         return
       } else if ($.petInfo.petStatus === 6) {
-        await slaveHelp();//已领取红包,但未领养新的,也能继续助力好友
+        // await slaveHelp();//已领取红包,但未领养新的,也能继续助力好友
         option['open-url'] = "openApp.jdMobile://";
         message = message + "<font color=\'#778899\' size=2>" + `【提醒⏰】已领取红包,但未继续领养新的物品`, '请去动动APP或微信小程序继续领养' + "</font>\n\n"
         $.msg($.name, `【提醒⏰】已领取红包,但未继续领养新的物品`, '请去动动APP或微信小程序继续领养', option);
@@ -151,7 +159,7 @@ async function jdPet() {
       $.taskInfo = $.taskInit.result;
 
       await petSport();//遛弯
-      await slaveHelp();//助力好友
+      // await slaveHelp();//助力好友
       await masterHelpInit();//获取助力的信息
       await doTask();//做日常任务
       await feedPetsAgain();//再次投食
