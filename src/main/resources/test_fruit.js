@@ -63,13 +63,35 @@ const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%2
             }
             subTitle = '';
             option = {};
-            await shareCodesFormat();
             await jdFruit();
         }
         message += "----\n\n"
     }
 
     that.log(message)
+
+    for (let i = 0; i < cookiesArr.length; i++) {
+        if (cookiesArr[i]) {
+          cookie = cookiesArr[i];
+          $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+          $.index = i + 1;
+          $.isLogin = true;
+          $.nickName = '';
+          await TotalBean();
+          console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
+          if (!$.isLogin) {
+            $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
+    
+            if ($.isNode()) {
+              await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
+            }
+            continue
+          }
+          await masterHelpShare();//助力好友
+          //互助 账号内部互助
+        }
+      }
+
 
 })()
     .catch((e) => {
@@ -94,13 +116,14 @@ async function jdFruit() {
             message += "<font color=\'#778899\' size=2>【已兑换水果】" + `${$.farmInfo.farmUserPro.winTimes}` + "次</font>\n\n";
             that.log(`\n【动动账号${$.index}（${$.nickName || $.UserName}）的${$.name}好友互助码】${$.farmInfo.farmUserPro.shareCode}\n`);
             that.log(`\n【已成功兑换水果】${$.farmInfo.farmUserPro.winTimes}次\n`);
-            await getHelp();
-            await masterHelpShare();//助力好友
+            newShareCodes.push($.farmInfo.farmUserPro.shareCode);
+            await setHelp();
+            await setHelp();
             await setHelp();
             if ($.farmInfo.treeState === 2 || $.farmInfo.treeState === 3) {
                 option['open-url'] = urlSchema;
 
-                mes = "<font color=\'#778899\' size=2> " + getManName + "，你好\n\n【提醒⏰】" + fruitName + "已可领取\n请去动动APP或微信小程序查看\n点击弹窗即达</font>"
+                mes = "<font color=\'#778899\' size=2> " + `${getManName}` + "，你好\n\n【提醒⏰】" + fruitName + "已可领取\n请去动动APP或微信小程序查看\n点击弹窗即达</font>"
                 postToDingTalk2(mes)
 
                 $.msg($.name, ``, `【动动账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去动动APP或微信小程序查看\n点击弹窗即达`, option);
@@ -114,7 +137,7 @@ async function jdFruit() {
                 //已下单购买, 但未开始种植新的水果
                 option['open-url'] = urlSchema;
                 $.msg($.name, ``, `【动动账号${$.index}】 ${$.nickName || $.UserName}\n【提醒⏰】您忘了种植新的水果\n请去动动APP或微信小程序选购并种植新的水果\n点击弹窗即达`, option);
-                mes = "<font color=\'#778899\' size=2> " + getManName + "，你好\n\n【提醒⏰】您忘了种植新的水果\n请去京东APP或微信小程序选购并种植新的水果</font>"
+                mes = "<font color=\'#778899\' size=2> " + `${getManName}` + "，你好\n\n【提醒⏰】您忘了种植新的水果\n请去京东APP或微信小程序选购并种植新的水果</font>"
                 postToDingTalk2(mes)
 
                 if ($.isNode()) {
@@ -236,7 +259,7 @@ async function doDailyTask() {
     //   getExtraAward(),//领取额外水滴奖励
     //   turntableFarm()//天天抽奖得好礼
     // ])
-    // await getAwardInviteFriend();
+    await getAwardInviteFriend();
     await clockInIn();//打卡领水
     await executeWaterRains();//水滴雨
     await getExtraAward();//领取额外水滴奖励
@@ -1328,26 +1351,7 @@ function readShareCode() {
         resolve()
     })
 }
-function shareCodesFormat() {
-    return new Promise(async resolve => {
-        // that.log(`第${$.index}个动动账号的助力码:::${jdFruitShareArr[$.index - 1]}`)
-        newShareCodes = [];
-        // if (jdFruitShareArr[$.index - 1]) {
-        //   newShareCodes = jdFruitShareArr[$.index - 1].split('@');
-        // } else {
-        //   that.log(`由于您第${$.index}个动动账号未提供shareCode,将采纳本脚本自带的助力码\n`)
-        //   const tempIndex = $.index > shareCodes.length ? (shareCodes.length - 1) : ($.index - 1);
-        //   newShareCodes = shareCodes[tempIndex].split('@');
-        // }
-        // const readShareCodeRes = await readShareCode();
-        // if (readShareCodeRes && readShareCodeRes.code === 200) {
-        //   // newShareCodes = newShareCodes.concat(readShareCodeRes.data || []);
-        //   newShareCodes = [...new Set([...newShareCodes, ...(readShareCodeRes.data || [])])];
-        // }
-        // that.log(`第${$.index}个动动账号将要助力的好友${JSON.stringify(newShareCodes)}`)
-        resolve();
-    })
-}
+
 function requireConfig() {
     return new Promise(resolve => {
         that.log('开始获取配置文件\n')

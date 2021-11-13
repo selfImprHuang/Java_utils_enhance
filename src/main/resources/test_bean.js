@@ -27,10 +27,10 @@ const $ = new Env('动动种豆得豆');
 //ios等软件用户直接用NobyDa的jd cookie
 let jdNotify = true;//是否开启静默运行。默认true开启
 let postTime = 11
-let postDay = 1 
+let postDay = 1
 let cookiesArr = [], cookie = '', jdPlantBeanShareArr = [], isBox = false, notify, newShareCodes, option, subTitle;
 let message = ""
-let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=18444b555747aad3381bc1d1e3dea72b03158e152a846f818d82a1ca946bd43f0"
+let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
 let dingtalk1 = "https://oapi.dingtalk.com/robot/send?access_token=04ab95f07aa0397e7167c6ea3a331bc7fcddbc4cda4a482b1e7e76755f97f6a0"
 let roleMap = {
   "jd_4521b375ebb5d": "锟子怪",
@@ -49,7 +49,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
 //助力好友分享码(最多3个,否则后面的助力失败)
 //此此内容是IOS用户下载脚本到本地使用，填写互助码的地方，同一动动账号的好友互助码请使用@符号隔开。
 //下面给出两个账号的填写示例（iOS只支持2个动动账号）
-let shareCodes = ['']
+let shareCodes = []
 let allMessage = ``;
 let currentRoundId = null;//本期活动id
 let lastRoundId = null;//上期id
@@ -93,10 +93,55 @@ let num;
       }
       subTitle = '';
       option = {};
-      await shareCodesFormat();
       await jdPlantBean();
       await showMsg();
     }
+  }
+
+
+  //开始互助
+  for (let i = 0; i < cookiesArr.length; i++) {
+    if (cookiesArr[i]) {
+      cookie = cookiesArr[i];
+      $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+      $.index = i + 1;
+      $.isLogin = true;
+      $.nickName = '';
+
+      try {
+        console.log(`获取任务及基本信息`)
+        await plantBeanIndex();
+        for (let i = 0; i < $.plantBeanIndexResult.data.roundList.length; i++) {
+          if ($.plantBeanIndexResult.data.roundList[i].roundState === "2") {
+            num = i
+            break
+          }
+        }
+        // console.log(plantBeanIndexResult.data.taskList);
+        if ($.plantBeanIndexResult && $.plantBeanIndexResult.code === '0' && $.plantBeanIndexResult.data) {
+          const shareUrl = $.plantBeanIndexResult.data.jwordShareInfo.shareUrl
+          $.myPlantUuid = getParam(shareUrl, 'plantUuid')
+          console.log(`\n【动动账号${$.index}（${$.UserName}）的${$.name}好友互助码】${$.myPlantUuid}\n`);
+          roundList = $.plantBeanIndexResult.data.roundList;
+          currentRoundId = roundList[num].roundId;//本期的roundId
+          lastRoundId = roundList[num - 1].roundId;//上期的roundId
+          awardState = roundList[num - 1].awardState;
+          $.taskList = $.plantBeanIndexResult.data.taskList;
+          subTitle = `【动动昵称】${$.plantBeanIndexResult.data.plantUserInfo.plantNickName}`;
+          await shareCodesFormat();
+          await doHelp();//助力
+
+        } else {
+          console.log(`种豆得豆-初始失败:  ${JSON.stringify($.plantBeanIndexResult)}`);
+        }
+      } catch (e) {
+        $.logErr(e);
+        const errMsg = `动动账号${$.index} ${$.nickName || $.UserName}\n任务执行异常，请检查执行日志 ‼️‼️`;
+        if ($.isNode()) await notify.sendNotify(`${$.name}`, errMsg);
+        $.msg($.name, '', `${errMsg}`)
+      }
+    }
+
 
     message += "----\n\n"
   }
@@ -111,7 +156,7 @@ let num;
 }).finally(() => {
   that.log(message)
   postToDingTalk(message)
-  date  = new Date()
+  date = new Date()
   if (date.getDay() == postDay && date.getHours() == postTime) {
     postToDingTalk1(message)
   }
@@ -134,6 +179,9 @@ async function jdPlantBean() {
       const shareUrl = $.plantBeanIndexResult.data.jwordShareInfo.shareUrl
       $.myPlantUuid = getParam(shareUrl, 'plantUuid')
       console.log(`\n【动动账号${$.index}（${$.UserName}）的${$.name}好友互助码】${$.myPlantUuid}\n`);
+
+      shareCodes.push($.myPlantUuid) //增加互助码
+
       roundList = $.plantBeanIndexResult.data.roundList;
       currentRoundId = roundList[num].roundId;//本期的roundId
       lastRoundId = roundList[num - 1].roundId;//上期的roundId
@@ -143,7 +191,7 @@ async function jdPlantBean() {
       // message += "<font color=\'#778899\' size=2> " + `【上期时间】${roundList[num - 1].dateDesc.replace('上期 ', '')}\n` + "</font>\n\n";
       message += "<font color=\'#778899\' size=2> " + `【上期成长值】${roundList[num - 1].growth}\n` + "</font>\n\n";
       await receiveNutrients();//定时领取营养液
-      await doHelp();//助力
+      // await doHelp();//助力
       await doTask();//做日常任务
       await doEgg();
       await stealFriendWater();
@@ -549,7 +597,8 @@ async function plantShareSupportList() {
         friendList.push(item);
       }
     })
-    message += "<font color=\'#778899\' size=2>" `【助力您的好友】共${friendList.length}人` + "</font>\n\n";
+    console.log(`【助力您的好友】共${friendList.length}人`)
+    // message += "<font color=\'#778899\' size=2>" +  `【助力您的好友】共${friendList.length}人` + "</font>\n\n";
   } else {
     console.log(`异常情况：${JSON.stringify($.shareSupportList)}`)
   }
@@ -595,19 +644,8 @@ function readShareCode() {
 //格式化助力码
 function shareCodesFormat() {
   return new Promise(async resolve => {
-    // console.log(`第${$.index}个动动账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
-    newShareCodes = [];
-    if ($.shareCodesArr[$.index - 1]) {
-      newShareCodes = $.shareCodesArr[$.index - 1].split('@');
-    } else {
-      console.log(`由于您第${$.index}个动动账号未提供shareCode,将采纳本脚本自带的助力码\n`)
-      const tempIndex = $.index > shareCodes.length ? (shareCodes.length - 1) : ($.index - 1);
-      newShareCodes = shareCodes[tempIndex].split('@');
-    }
-    // const readShareCodeRes = await readShareCode();
-    // if (readShareCodeRes && readShareCodeRes.code === 200) {
-    //   newShareCodes = [...new Set([...newShareCodes, ...(readShareCodeRes.data || [])])];
-    // }
+    console.log(`第${$.index}个动动账号的助力码:::${shareCodes}`)
+    newShareCodes = shareCodes
     console.log(`第${$.index}个动动账号将要助力的好友${JSON.stringify(newShareCodes)}`)
     resolve();
   })
@@ -811,7 +849,7 @@ function postToDingTalk(messgae) {
   }
 
 
-  $.post(toDingtalk(dingtalk , JSON.stringify(body)), (data, status, xhr) => {
+  $.post(toDingtalk(dingtalk, JSON.stringify(body)), (data, status, xhr) => {
     try {
       that.log(resp)
       that.log(data)
@@ -839,7 +877,7 @@ function postToDingTalk1(messgae) {
     "msgtype": "markdown",
     "markdown": {
       "title": "种豆得豆",
-      "text":  message1
+      "text": message1
     },
     "at": {
       "atMobiles": [],
@@ -848,7 +886,7 @@ function postToDingTalk1(messgae) {
   }
 
 
-  $.post(toDingtalk(dingtalk1 , JSON.stringify(body)), (data, status, xhr) => {
+  $.post(toDingtalk(dingtalk1, JSON.stringify(body)), (data, status, xhr) => {
     try {
       that.log(resp)
       that.log(data)

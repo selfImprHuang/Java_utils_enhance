@@ -9,18 +9,18 @@ let jdNotify = false;//是否关闭通知，false打开通知推送，true关闭
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 let goodsUrl = '', taskInfoKey = [];
 let randomCount = $.isNode() ? 20 : 5;
-let postAddress = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0" 
+let postAddress = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
 !(async () => {
   await requireConfig();
   if (!cookiesArr[0]) {
-    $.msg($.name, '【提示】请先获取动动账号一cookie\n直接使用NobyDa的动动签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
+    $.msg($.name, '【提示】请先获取动动账号一cookie\n直接使用NobyDa的动动签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
     return;
   }
 
   message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>动动萌宠</font> \n\n --- \n\n"
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
-	    await $.wait(Math.floor(Math.random() * (300000) + 5000));
+      await $.wait(Math.floor(Math.random() * (300000) + 5000));
       cookie = cookiesArr[i];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
       $.index = i + 1;
@@ -29,21 +29,21 @@ let postAddress = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38
 
 
       username = $.UserName
-      if ($.UserName == "jd_66ea783827d30"){
+      if ($.UserName == "jd_66ea783827d30") {
         username = "跑腿小弟"
       }
-      if ($.UserName == "jd_4521b375ebb5d"){
+      if ($.UserName == "jd_4521b375ebb5d") {
         username = "锟锟"
       }
-      if ($.UserName == "jd_542c10c0222bc"){
+      if ($.UserName == "jd_542c10c0222bc") {
         username = "康康"
       }
-       //加上名称
-      message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" +  username + " </font> </font> \n\n "
+      //加上名称
+      message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" + username + " </font> </font> \n\n "
       await TotalBean();
       that.log(`\n开始【动动账号${$.index}】${$.nickName || $.UserName}\n`);
       if (!$.isLogin) {
-        $.msg($.name, `【提示】cookie已失效`, `动动账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
+        $.msg($.name, `【提示】cookie已失效`, `动动账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
 
         if ($.isNode()) {
           await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `动动账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
@@ -54,24 +54,52 @@ let postAddress = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38
       goodsUrl = '';
       taskInfoKey = [];
       option = {};
-      await shareCodesFormat();
+
       await jdPet();
     }
     message += "----\n\n"
   }
-  if ($.isNode() && allMessage && $.ctrTemp) {
-    await notify.sendNotify(`${$.name}`, `${allMessage}`)
+
+  for (let i = 0; i < cookiesArr.length; i++) {
+    if (cookiesArr[i]) {
+      await $.wait(5000);
+      cookie = cookiesArr[i];
+      $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+      $.index = i + 1;
+      $.isLogin = true;
+      $.nickName = '';
+      try {
+        //查询jd宠物信息
+        const initPetTownRes = await request('initPetTown');
+        if (initPetTownRes.code === '0' && initPetTownRes.resultCode === '0' && initPetTownRes.message === 'success') {
+          $.petInfo = initPetTownRes.result;
+          await shareCodesFormat();
+          await slaveHelp();//助力好友
+        } else if (initPetTownRes.code === '0') {
+          that.log(`初始化萌宠失败:  ${initPetTownRes.message}`);
+        }
+      } catch (e) {
+        $.logErr(e)
+        const errMsg = `动动账号${$.index} ${$.nickName || $.UserName}\n任务执行异常，请检查执行日志 ‼️‼️`;
+        if ($.isNode()) await notify.sendNotify(`${$.name}`, errMsg);
+        $.msg($.name, '', `动动账号${$.index} ${$.nickName || $.UserName}\n${errMsg}`)
+      }
+    }
   }
+
+
 })()
-    .catch((e) => {
-      $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
-    })
-    .finally(() => {
-      message += getPic()
-      postToDingTalk(message)
-      taht.log(message)
-      $.done();
-    })
+  .catch((e) => {
+    $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+  })
+  .finally(() => {
+    message += getPic()
+    postToDingTalk(message)
+    taht.log(message)
+    $.done();
+  })
+
+
 async function jdPet() {
   try {
     //查询jd宠物信息
@@ -81,12 +109,12 @@ async function jdPet() {
       if ($.petInfo.userStatus === 0) {
         // $.msg($.name, '', `【提示】动动账号${$.index}${$.nickName}\n萌宠活动未开启\n请手动去动动APP开启活动\n入口：我的->游戏与互动->查看更多开启`, { "open-url": "openapp.jdmoble://" });
         await slaveHelp();//助力好友
-        message = message + "<font color=\'#778899\' size=2>"+ "动动萌宠未开启\n请手动去动动APP开启活动\n入口：我的->游戏与互动->查看更多开启</font>\n\n"
+        message = message + "<font color=\'#778899\' size=2>" + "动动萌宠未开启\n请手动去动动APP开启活动\n入口：我的->游戏与互动->查看更多开启</font>\n\n"
         $.log($.name, '', `【提示】动动账号${$.index}${$.nickName}\n萌宠活动未开启\n请手动去动动APP开启活动\n入口：我的->游戏与互动->查看更多开启`);
         return
       }
       if (!$.petInfo.goodsInfo) {
-        message = message + "<font color=\'#778899\' size=2>"+ "暂未选购新的商品</font>\n\n"
+        message = message + "<font color=\'#778899\' size=2>" + "暂未选购新的商品</font>\n\n"
         $.msg($.name, '', `【提示】动动账号${$.index}${$.nickName}\n暂未选购新的商品`, { "open-url": "openapp.jdmoble://" });
         if ($.isNode()) await notify.sendNotify(`${$.name} - ${$.index} - ${$.nickName}`, `【提示】动动账号${$.index}${$.nickName}\n暂未选购新的商品`);
         return
@@ -97,7 +125,7 @@ async function jdPet() {
       if ($.petInfo.petStatus === 5) {
         await slaveHelp();//可以兑换而没有去兑换,也能继续助力好友
         option['open-url'] = "openApp.jdMobile://";
-        message = message + "<font color=\'#778899\' size=2>"+ `【提醒⏰】${$.petInfo.goodsInfo.goodsName}已可领取`, '请去动动APP或微信小程序查看' +"</font>\n\n"
+        message = message + "<font color=\'#778899\' size=2>" + `【提醒⏰】${$.petInfo.goodsInfo.goodsName}已可领取`, '请去动动APP或微信小程序查看' + "</font>\n\n"
         $.msg($.name, `【提醒⏰】${$.petInfo.goodsInfo.goodsName}已可领取`, '请去动动APP或微信小程序查看', option);
         if ($.isNode()) {
           await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName || $.UserName}奖品已可领取`, `动动账号${$.index} ${$.nickName}\n${$.petInfo.goodsInfo.goodsName}已可领取`);
@@ -106,7 +134,7 @@ async function jdPet() {
       } else if ($.petInfo.petStatus === 6) {
         await slaveHelp();//已领取红包,但未领养新的,也能继续助力好友
         option['open-url'] = "openApp.jdMobile://";
-        message = message + "<font color=\'#778899\' size=2>"+ `【提醒⏰】已领取红包,但未继续领养新的物品`, '请去动动APP或微信小程序继续领养' + "</font>\n\n"
+        message = message + "<font color=\'#778899\' size=2>" + `【提醒⏰】已领取红包,但未继续领养新的物品`, '请去动动APP或微信小程序继续领养' + "</font>\n\n"
         $.msg($.name, `【提醒⏰】已领取红包,但未继续领养新的物品`, '请去动动APP或微信小程序继续领养', option);
         if ($.isNode()) {
           await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName || $.UserName}奖品已可领取`, `动动账号${$.index} ${$.nickName}\n已领取红包,但未继续领养新的物品`);
@@ -114,6 +142,7 @@ async function jdPet() {
         return
       }
       that.log(`\n【动动账号${$.index}（${$.UserName}）的${$.name}好友互助码】${$.petInfo.shareCode}\n`);
+      shareCodes.push($.petInfo.shareCode) //添加助力码
       await taskInit();
       if ($.taskInit.resultCode === '9999' || !$.taskInit.result) {
         that.log('初始化任务异常, 请稍后再试');
@@ -129,7 +158,7 @@ async function jdPet() {
       await energyCollect();//收集好感度
       await showMsg();
       that.log('全部任务完成, 如果帮助到您可以点下🌟STAR鼓励我一下, 明天见~');
-    } else if (initPetTownRes.code === '0'){
+    } else if (initPetTownRes.code === '0') {
       that.log(`初始化萌宠失败:  ${initPetTownRes.message}`);
     }
   } catch (e) {
@@ -146,8 +175,8 @@ async function energyCollect() {
   const response = await request(function_id);
   // that.log(`收取任务奖励好感度完成:${JSON.stringify(response)}`);
   if (response.resultCode === '0') {
-    message = message + "<font color=\'#778899\' size=2>"+  `【第${response.result.medalNum + 1}块勋章完成进度】${response.result.medalPercent}%，还需收集${response.result.needCollectEnergy}好感\n` + "</font>\n\n";
-    message = message + "<font color=\'#778899\' size=2>"+ `【已获得勋章】${response.result.medalNum}块，还需收集${response.result.needCollectMedalNum}块即可兑换奖品“${$.petInfo.goodsInfo.goodsName}”\n` + "</font>\n\n";
+    message = message + "<font color=\'#778899\' size=2>" + `【第${response.result.medalNum + 1}块勋章完成进度】${response.result.medalPercent}%，还需收集${response.result.needCollectEnergy}好感\n` + "</font>\n\n";
+    message = message + "<font color=\'#778899\' size=2>" + `【已获得勋章】${response.result.medalNum}块，还需收集${response.result.needCollectMedalNum}块即可兑换奖品“${$.petInfo.goodsInfo.goodsName}”\n` + "</font>\n\n";
   }
 }
 //再次投食
@@ -234,20 +263,20 @@ async function masterHelpInit() {
   // that.log(`助力信息: ${JSON.stringify(res)}`);
   if (res.code === '0' && res.resultCode === '0') {
     if (res.result.masterHelpPeoples && res.result.masterHelpPeoples.length >= 5) {
-      if(!res.result.addedBonusFlag) {
+      if (!res.result.addedBonusFlag) {
         that.log("开始领取额外奖励");
         let getHelpAddedBonusResult = await request('getHelpAddedBonus');
         if (getHelpAddedBonusResult.resultCode === '0') {
-          message +=  "<font color=\'#778899\' size=2>"+ `【额外奖励${getHelpAddedBonusResult.result.reward}领取】${getHelpAddedBonusResult.message}\n` + "</font>\n\n";
+          message += "<font color=\'#778899\' size=2>" + `【额外奖励${getHelpAddedBonusResult.result.reward}领取】${getHelpAddedBonusResult.message}\n` + "</font>\n\n";
         }
         that.log(`领取30g额外奖励结果：【${getHelpAddedBonusResult.message}】`);
       } else {
         that.log("已经领取过5好友助力额外奖励");
-        message +=  "<font color=\'#778899\' size=2>"+ `【额外奖励】已领取\n` + "</font>\n\n";
+        message += "<font color=\'#778899\' size=2>" + `【额外奖励】已领取\n` + "</font>\n\n";
       }
     } else {
       that.log("助力好友未达到5个")
-      message += "<font color=\'#778899\' size=2>"+ `【额外奖励】领取失败，原因：给您助力的人未达5个\n` + "</font>\n\n";
+      message += "<font color=\'#778899\' size=2>" + `【额外奖励】领取失败，原因：给您助力的人未达5个\n` + "</font>\n\n";
     }
     if (res.result.masterHelpPeoples && res.result.masterHelpPeoples.length > 0) {
       that.log('帮您助力的好友的名单开始')
@@ -259,7 +288,7 @@ async function masterHelpInit() {
           str += (item.nickName || "匿名用户") + '，';
         }
       })
-      message +=  "<font color=\'#778899\' size=2>"+ `【助力您的好友】${str}\n` + "</font>\n\n";
+      message += "<font color=\'#778899\' size=2>" + `【助力您的好友】${str}\n` + "</font>\n\n";
     }
   }
 }
@@ -275,7 +304,7 @@ async function slaveHelp() {
   for (let code of newShareCodes) {
     that.log(`开始助力动动账号${$.index} - ${$.nickName}的好友: ${code}`);
     if (!code) continue;
-    let response = await request('slaveHelp', {'shareCode': code});
+    let response = await request('slaveHelp', { 'shareCode': code });
     if (response.code === '0' && response.resultCode === '0') {
       if (response.result.helpStatus === 0) {
         that.log('已给好友: 【' + response.result.masterNickName + '】助力成功');
@@ -295,7 +324,7 @@ async function slaveHelp() {
     }
   }
   if (helpPeoples && helpPeoples.length > 0) {
-    message = message + "<font color=\'#778899\' size=2>"+  `【您助力的好友】${helpPeoples.substr(0, helpPeoples.length - 1)}\n` +"</font>\n\n";
+    message = message + "<font color=\'#778899\' size=2>" + `【您助力的好友】${helpPeoples.substr(0, helpPeoples.length - 1)}\n` + "</font>\n\n";
   }
 }
 // 遛狗, 每天次数上限10次, 随机给狗粮, 每次遛狗结束需调用getSportReward领取奖励, 才能进行下一次遛狗
@@ -321,7 +350,7 @@ async function petSport() {
 // 初始化任务, 可查询任务完成情况
 async function taskInit() {
   that.log('开始任务初始化');
-  $.taskInit = await request('taskInit', {"version":1});
+  $.taskInit = await request('taskInit', { "version": 1 });
 }
 // 每日签到, 每天一次
 async function signInitFun() {
@@ -354,8 +383,8 @@ async function threeMealInitFun() {
 // 浏览指定店铺 任务
 async function browseSingleShopInit(item) {
   that.log(`开始做 ${item.title} 任务， ${item.desc}`);
-  const body = {"index": item['index'], "version":1, "type":1};
-  const body2 = {"index": item['index'], "version":1, "type":2};
+  const body = { "index": item['index'], "version": 1, "type": 1 };
+  const body2 = { "index": item['index'], "version": 1, "type": 2 };
   const response = await request("getSingleShopReward", body);
   // that.log(`点击进去response::${JSON.stringify(response)}`);
   if (response.code === '0' && response.resultCode === '0') {
@@ -396,7 +425,7 @@ async function inviteFriendsInitFun() {
     const res = await request('getInviteFriendsReward');
     if (res.code == 0 && res.resultCode == 0) {
       that.log(`领取邀请新用户奖励成功,获得狗粮现有狗粮${$.taskInfo.inviteFriendsInit.reward}g，${res.result.foodAmount}g`);
-      message += "<font color=\'#778899\' size=2>"+ `【邀请新用户】获取狗粮${$.taskInfo.inviteFriendsInit.reward}g\n` +"</font>\n\n";
+      message += "<font color=\'#778899\' size=2>" + `【邀请新用户】获取狗粮${$.taskInfo.inviteFriendsInit.reward}g\n` + "</font>\n\n";
     }
   }
 }
@@ -445,7 +474,7 @@ async function showMsg() {
 }
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: `http://jd.turinglabs.net/api/v2/jd/pet/read/${randomCount}/`, 'timeout': 10000}, (err, resp, data) => {
+    $.get({ url: `http://jd.turinglabs.net/api/v2/jd/pet/read/${randomCount}/`, 'timeout': 10000 }, (err, resp, data) => {
       try {
         if (err) {
           that.log(`${JSON.stringify(err)}`)
@@ -468,17 +497,9 @@ function readShareCode() {
 }
 function shareCodesFormat() {
   return new Promise(async resolve => {
-    // that.log(`第${$.index}个动动账号的助力码:::${jdPetShareArr[$.index - 1]}`)
-    newShareCodes = [];
-    if (jdPetShareArr[$.index - 1]) {
-      newShareCodes = jdPetShareArr[$.index - 1].split('@');
-    } else {
-      that.log(`由于您第${$.index}个动动账号未提供shareCode,将采纳本脚本自带的助力码\n`)
-      if(shareCodes.length>0){
-          const tempIndex = $.index > shareCodes.length ? (shareCodes.length - 1) : ($.index - 1);
-      newShareCodes = shareCodes[tempIndex].split('@');
-      }
-    }
+    that.log(`第${$.index}个动动账号的助力码:::${shareCodes}`)
+    newShareCodes = shareCodes;
+
     //因好友助力功能下线。故暂时屏蔽
     //const readShareCodeRes = await readShareCode();
     const readShareCodeRes = null;
@@ -489,6 +510,8 @@ function shareCodesFormat() {
     resolve();
   })
 }
+
+
 function requireConfig() {
   return new Promise(resolve => {
     that.log('开始获取动动萌宠配置文件\n')
@@ -503,7 +526,7 @@ function requireConfig() {
           cookiesArr.push(jdCookieNode[item])
         }
       })
-      if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') that.log = () => {};
+      if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') that.log = () => { };
     } else {
       cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
     }
@@ -654,56 +677,56 @@ function jsonParse(str) {
 
 //我加的函数
 function postToDingTalk(messgae) {
-    const message1 = "" + messgae
-    that.log(messgae)
+  const message1 = "" + messgae
+  that.log(messgae)
 
-    const body = {
-        "msgtype": "markdown",
-        "markdown": {
-            "title":"动动萌宠",
-            "text": message1
-        },
-        "at": {
-            "atMobiles": [],
-            "isAtAll": false
-        }
+  const body = {
+    "msgtype": "markdown",
+    "markdown": {
+      "title": "动动萌宠",
+      "text": message1
+    },
+    "at": {
+      "atMobiles": [],
+      "isAtAll": false
     }
+  }
 
 
-    $.post(toDingtalk(postAddress ,JSON.stringify(body)), (data,status,xhr)=>{
-        try {
-            that.log(resp)
-            that.log(data)
-            if (err) {
-                that.log(JSON.stringify(err));
-                $.logErr(err);
-            } else {
-                if (safeGet(data)) {
-                    $.duckRes = JSON.parse(data);
-                }
-            }
-        } catch (e) {
-            $.logErr(e, resp)
-        } finally {
-            resolve();
+  $.post(toDingtalk(postAddress, JSON.stringify(body)), (data, status, xhr) => {
+    try {
+      that.log(resp)
+      that.log(data)
+      if (err) {
+        that.log(JSON.stringify(err));
+        $.logErr(err);
+      } else {
+        if (safeGet(data)) {
+          $.duckRes = JSON.parse(data);
         }
-    },"json")
+      }
+    } catch (e) {
+      $.logErr(e, resp)
+    } finally {
+      resolve();
+    }
+  }, "json")
 }
 
 
 function toDingtalk(urlmain, bodyMain) {
-    return {
-        url: urlmain,
-        body:bodyMain,
-        headers: { 'Content-Type': 'application/json;charset=utf-8' },
-        timeout: 10000,
-    }
+  return {
+    url: urlmain,
+    body: bodyMain,
+    headers: { 'Content-Type': 'application/json;charset=utf-8' },
+    timeout: 10000,
+  }
 }
-function getPic(){
-    let code = ["1.gif","2.png","3.png","4.png","5.gif","6.gif","7.gif","8.gif","9.gif","10.png","11.png"]
-    let address = "\n\n ![screenshot](https://cdn.jsdelivr.net/gh/selfImprHuang/Go-Tool@v1.2/test/emptyDirTest/3/"
+function getPic() {
+  let code = ["1.gif", "2.png", "3.png", "4.png", "5.gif", "6.gif", "7.gif", "8.gif", "9.gif", "10.png", "11.png"]
+  let address = "\n\n ![screenshot](https://cdn.jsdelivr.net/gh/selfImprHuang/Go-Tool@v1.2/test/emptyDirTest/3/"
 
-        pos = parseInt(11*Math.random())
-    address = address + code[pos] + ")"
-    return address
+  pos = parseInt(11 * Math.random())
+  address = address + code[pos] + ")"
+  return address
 }
