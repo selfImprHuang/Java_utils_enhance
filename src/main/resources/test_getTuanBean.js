@@ -5,8 +5,8 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
 const randomCount = $.isNode() ? 0 : 5;
 //IOS等用户直接用NobyDa的jd cookie
-let cookiesArr = [], cookie = '', message;
-$.tuanList = [];
+let cookiesArr = [], cookie = '', message = "";
+let tuanList = [];
 let roleMap = {
     "jd_4521b375ebb5d": "锟子怪",
     "jd_542c10c0222bc": "康子怪",
@@ -20,6 +20,8 @@ let roleMap = {
     "jd_4311ac0ff4456": "居子"
 }
 let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
+let username = ""
+
 
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
@@ -70,7 +72,7 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
 
     }
     postToDingTalk(message)
-    message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>赚京豆</font> \n\n"
+    message = "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>赚京豆</font> \n\n"
 
     that.log(`\n\n内部互助 【赚京豆(微信小程序)-瓜分京豆】活动(优先内部账号互助(需内部cookie数量大于${$.assistNum || 4}个)\n`)
     for (let i = 0; i < cookiesArr.length; i++) {
@@ -79,11 +81,11 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
             cookie = cookiesArr[i];
             $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
             if ($.canHelp && (cookiesArr.length > $.assistNum)) {
-                if ($.tuanList.length) that.log(`开始账号内部互助 赚京豆-瓜分京豆 活动，优先内部账号互助`)
-                for (let j = 0; j < $.tuanList.length; ++j) {
-                    that.log(`账号 ${$.UserName} 开始给 【${$.tuanList[j]['assistedPinEncrypted']}】助力`)
-                    message += "<font color=\'#FFA500\'>" + `账号 ${$.UserName} 开始给 【${$.tuanList[j]['assistedPinEncrypted']}】助力` + "</font> \n\n"
-                    await helpFriendTuan($.tuanList[j])
+                if (tuanList.length) that.log(`开始账号内部互助 赚京豆-瓜分京豆 活动，优先内部账号互助`)
+                for (let j = 0; j < tuanList.length; ++j) {
+                    that.log(`账号 ${$.UserName} 开始给 【${tuanList[j]['assistedPinEncrypted']}】助力`)
+                    message += "<font color=\'#FFA500\'>" + `账号 ${$.UserName} 开始给 【${tuanList[j]['assistedPinEncrypted']}】助力` + "</font> \n\n"
+                    await helpFriendTuan(tuanList[j])
                     if (!$.canHelp) break
                     await $.wait(200)
                 }
@@ -547,7 +549,7 @@ async function distributeBeanActivity() {
             if ($.hasOpen) await getUserTuanInfo()
         }
         if ($.tuan && $.tuan.hasOwnProperty('assistedPinEncrypted') && $.assistStatus !== 3) {
-            $.tuanList.push($.tuan);
+            tuanList.push($.tuan);
             const code = Object.assign($.tuan, { "time": Date.now() });
             $.post({
                 url: `http://go.chiang.fun/autocommit`,

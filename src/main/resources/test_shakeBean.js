@@ -45,7 +45,7 @@ let roleMap = {
     "jd_4311ac0ff4456": "居子"
 }
 let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
-
+let username = ""
 
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message = '', allMessage = '';
@@ -116,7 +116,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
     }
     postToDingTalk(message)
 
-    message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>摇京豆</font> \n\n"
+    message = "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>摇京豆</font> \n\n"
 
     //开始助力
     for (let v = 0; v < cookiesArr.length; v++) {

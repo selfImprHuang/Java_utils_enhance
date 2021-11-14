@@ -26,7 +26,7 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
 const helpAuthor = false; // 是否帮助作者助力，false打开通知推送，true关闭通知推送
 //IOS等用户直接用NobyDa的jd cookie
-let cookiesArr = [], cookie = '', message;
+let cookiesArr = [], cookie = '', message = "" ;
 let newShareCodes = []
 let roleMap = {
     "jd_4521b375ebb5d": "锟子怪",
@@ -41,7 +41,7 @@ let roleMap = {
     "jd_4311ac0ff4456": "居子"
 }
 let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
-
+let username = ""
 
 
 if ($.isNode()) {
@@ -92,7 +92,7 @@ const JD_API_HOST = 'https://api.m.jd.com/';
         message += "----\n\n"
     }
     postToDingTalk(message)
-    message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>额外领京豆</font> \n\n"
+    message = "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>额外领京豆</font> \n\n"
 
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {

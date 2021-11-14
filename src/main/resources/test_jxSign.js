@@ -13,7 +13,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
 //IOS等用户直接用NobyDa的jd cookie
-let cookiesArr = [], cookie = '', message;
+let cookiesArr = [], cookie = '', message = "";
 const randomCount = $.isNode() ? 5 : 5;
 let cash_exchange = false;//是否消耗2元红包兑换200京豆，默认否
 let shareCodes = []; //助力码
@@ -28,8 +28,10 @@ let roleMap = {
     "jd_4333d5dc1ac5f": "舒楠子",
     "jd_66ea783827d30": "军子",
     "jd_4311ac0ff4456": "居子"
-  }
-  let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
+}
+let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
+
+let username = ""
 
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
@@ -45,7 +47,7 @@ let allMessage = '';
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
-    
+
     message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>签到领现金</font> \n\n"
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
@@ -58,9 +60,9 @@ let allMessage = '';
 
             if (roleMap[username] != undefined) {
                 username = roleMap[username]
-              }
-              //加上名称
-              message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" + username + " </font> </font> \n\n "
+            }
+            //加上名称
+            message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" + username + " </font> </font> \n\n "
             console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
             if (!$.isLogin) {
                 $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
@@ -75,7 +77,7 @@ let allMessage = '';
     }
 
     postToDingTalk(message)
-    message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>签到领现金</font> \n\n"
+    message = "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>签到领现金</font> \n\n"
 
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
@@ -128,18 +130,18 @@ async function appindex(info = false) {
                                 if (message) {
                                     allMessage += `京东账号${$.index}${$.nickName}\n${message}${$.index !== cookiesArr.length ? '\n\n' : ''}`;
                                 }
-                                message += "<font color=\'#FFA500\'>" + `当前现金：${data.data.result.totalMoney}元`+ "</font> \n\n"
+                                message += "<font color=\'#FFA500\'>" + `当前现金：${data.data.result.totalMoney}元` + "</font> \n\n"
                                 console.log(`\n\n当前现金：${data.data.result.totalMoney}元`);
                                 return
                             }
                             $.signMoney = data.data.result.totalMoney;
-                            
+
                             console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${data.data.result.invitedCode}\n`);
                             let helpInfo = {
                                 'inviteCode': data.data.result.invitedCode,
                                 'shareDate': data.data.result.shareDate
-                              }
-                              shareCodes = shareCodes.push(helpInfo) //添加我的助力码
+                            }
+                            shareCodes = shareCodes.push(helpInfo) //添加我的助力码
 
                             for (let task of data.data.result.taskInfos) {
                                 if (task.type === 4) {
@@ -232,7 +234,7 @@ async function helpFriends() {
     $.canHelp = true
     for (let code of shareCodes) {
         console.log(`去帮助好友${code['inviteCode']}`)
-        message += "<font color=\'#FFA500\'>" + `去帮助好友${code['inviteCode']}`+ "</font> \n\n"
+        message += "<font color=\'#FFA500\'>" + `去帮助好友${code['inviteCode']}` + "</font> \n\n"
         await helpFriend(code)
         if (!$.canHelp) break
         await $.wait(1000)
@@ -250,8 +252,8 @@ function helpFriend(helpInfo) {
                     if (safeGet(data)) {
                         data = JSON.parse(data);
                         if (data.code === 0 && data.data.bizCode === 0) {
-                            
-                            message += "<font color=\'#FFA500\'>" + `助力成功，获得${data.data.result.cashStr}`+ "</font> \n\n"
+
+                            message += "<font color=\'#FFA500\'>" + `助力成功，获得${data.data.result.cashStr}` + "</font> \n\n"
                             console.log(`助力成功，获得${data.data.result.cashStr}`)
                             // console.log(data.data.result.taskInfos)
                         } else if (data.data.bizCode === 207) {
@@ -340,8 +342,8 @@ function getReward(source = 1) {
                         data = JSON.parse(data);
                         if (data.code === 0 && data.data.bizCode === 0) {
                             console.log(`领奖成功，${data.data.result.shareRewardTip}【${data.data.result.shareRewardAmount}】`)
-                            message +=  "<font color=\'#FFA500\'>" +`领奖成功，${data.data.result.shareRewardTip}【${data.data.result.shareRewardAmount}元】\n`+ "</font> \n\n"
-                           
+                            message += "<font color=\'#FFA500\'>" + `领奖成功，${data.data.result.shareRewardTip}【${data.data.result.shareRewardAmount}元】\n` + "</font> \n\n"
+
                             // console.log(data.data.result.taskInfos)
                         } else {
                             // console.log(`领奖失败，${data.data.bizMsg}`)
@@ -649,46 +651,46 @@ function Env(t, e) { "undefined" != typeof process && JSON.stringify(process.env
 function postToDingTalk(messgae) {
     const message1 = "" + messgae
     // that.log(messgae)
-  
+
     const body = {
-      "msgtype": "markdown",
-      "markdown": {
-        "title": "签到领现金",
-        "text": message1
-      },
-      "at": {
-        "atMobiles": [],
-        "isAtAll": false
-      }
-    }
-  
-  
-    $.post(toDingtalk(dingtalk, JSON.stringify(body)), (data, status, xhr) => {
-      try {
-        that.log(resp)
-        that.log(data)
-        if (err) {
-          that.log(JSON.stringify(err));
-          $.logErr(err);
-        } else {
-          if (safeGet(data)) {
-            $.duckRes = JSON.parse(data);
-          }
+        "msgtype": "markdown",
+        "markdown": {
+            "title": "签到领现金",
+            "text": message1
+        },
+        "at": {
+            "atMobiles": [],
+            "isAtAll": false
         }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve();
-      }
-    }, "json")
-  }
-  
-  
-  function toDingtalk(urlmain, bodyMain) {
-    return {
-      url: urlmain,
-      body: bodyMain,
-      headers: { 'Content-Type': 'application/json;charset=utf-8' },
-      timeout: 10000,
     }
-  }
+
+
+    $.post(toDingtalk(dingtalk, JSON.stringify(body)), (data, status, xhr) => {
+        try {
+            that.log(resp)
+            that.log(data)
+            if (err) {
+                that.log(JSON.stringify(err));
+                $.logErr(err);
+            } else {
+                if (safeGet(data)) {
+                    $.duckRes = JSON.parse(data);
+                }
+            }
+        } catch (e) {
+            $.logErr(e, resp)
+        } finally {
+            resolve();
+        }
+    }, "json")
+}
+
+
+function toDingtalk(urlmain, bodyMain) {
+    return {
+        url: urlmain,
+        body: bodyMain,
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        timeout: 10000,
+    }
+}
