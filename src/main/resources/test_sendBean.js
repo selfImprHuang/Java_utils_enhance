@@ -20,6 +20,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], isLoginInfo = {};
+let openTuanList = [];
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
@@ -59,7 +60,7 @@ if ($.isNode()) {
 
   let openCount = Math.floor((Number(cookiesArr.length)-1)/Number($.completeNumbers));
   console.log(`\n共有${cookiesArr.length}个账号，前${openCount}个账号可以开团\n`);
-  let openTuanList = [];
+
   console.log(`前${openCount}个账号开始开团\n`);
   for (let i = 0; i < cookiesArr.length && i < openCount; i++) {
     $.cookie = cookiesArr[i];
@@ -282,7 +283,7 @@ async function openTuan(){
   }else{
     console.log(`【京东账号${$.index}】${$.UserName} 瓜分ID:${$.rewardRecordId}`);
   }
-  $.openTuanList.push({
+  openTuanList.push({
     'user':$.UserName,
     'rewardRecordId':$.rewardRecordId,
     'completed':$.detail.completed,
