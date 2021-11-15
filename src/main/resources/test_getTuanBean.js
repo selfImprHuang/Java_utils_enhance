@@ -71,6 +71,8 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
         message += "----\n\n"
 
     }
+
+    console.log(message)
     postToDingTalk(message)
     message = "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>赚京豆</font> \n\n"
 
@@ -97,6 +99,8 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
         $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
     })
     .finally(() => {
+
+        console.log(message)
         postToDingTalk(message)
         $.done();
     })

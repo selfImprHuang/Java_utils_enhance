@@ -26,7 +26,7 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
 const helpAuthor = false; // 是否帮助作者助力，false打开通知推送，true关闭通知推送
 //IOS等用户直接用NobyDa的jd cookie
-let cookiesArr = [], cookie = '', message = "" ;
+let cookiesArr = [], cookie = '', message = "";
 let newShareCodes = []
 let roleMap = {
     "jd_4521b375ebb5d": "锟子怪",
@@ -91,6 +91,8 @@ const JD_API_HOST = 'https://api.m.jd.com/';
 
         message += "----\n\n"
     }
+
+    console.log(message)
     postToDingTalk(message)
     message = "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>额外领京豆</font> \n\n"
 
@@ -111,6 +113,8 @@ const JD_API_HOST = 'https://api.m.jd.com/';
         $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
     })
     .finally(() => {
+
+        console.log(message)
         postToDingTalk(message)
         $.done();
     })
@@ -362,7 +366,7 @@ function award(source = "home") {
                         data = JSON.parse(data);
                         if (data.data) {
                             that.log(`领奖成功，获得 ${data.data.beanNum} 个京豆`)
-                            message += "<font color=\'#FFA500\'>" +`领奖成功，获得 ${data.data.beanNum} 个京豆\n` + "</font> \n\n"
+                            message += "<font color=\'#FFA500\'>" + `领奖成功，获得 ${data.data.beanNum} 个京豆\n` + "</font> \n\n"
 
                         } else {
                             that.log(`领奖失败，${data.errorMessage}`)
