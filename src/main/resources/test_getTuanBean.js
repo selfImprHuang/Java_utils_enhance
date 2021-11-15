@@ -67,6 +67,9 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
                 }
                 continue
             }
+            if (i >= helpTuanLenght) {
+                continue
+            }
             await main();
         }
         message += "----\n\n"
@@ -86,9 +89,11 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
             if ($.canHelp && (cookiesArr.length > $.assistNum)) {
                 if (tuanList.length) that.log(`开始账号内部互助 赚京豆-瓜分京豆 活动，优先内部账号互助`)
 
+               if( i == 0 ){
                 for (let j = 0; j < tuanList.length; ++j) {
                     message += "<font color=\'#FFA500\'>" + `开团码 【${tuanList[j]['assistedPinEncrypted']}】` + "</font> \n\n"
                 }
+               }
 
                 for (let j = 0; j < tuanList.length  && j < helpTuanLenght; ++j) {
                     that.log(`账号 ${$.UserName} 开始给 【${tuanList[j]['assistedPinEncrypted']}】助力`)
