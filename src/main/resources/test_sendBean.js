@@ -82,7 +82,8 @@ if ($.isNode()) {
   }
   console.log('\n开团信息\n'+JSON.stringify(openTuanList));
   console.log(`\n开始互助\n`);
-  let ckList = getRandomArrayElements(cookiesArr,cookiesArr.length);
+  let ckList = []
+  ckList = getRandomArrayElements(cookiesArr,cookiesArr.length);
 
   for (let i = 0; i < ckList.length && openTuanList.length > 0; i++) {
     $.cookie = ckList[i];

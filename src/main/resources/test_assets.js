@@ -27,7 +27,8 @@ let roleMap = {
     "417040678_m":"斌子怪",
     "jd_73d88459d908e":"杰杰子",
 	"381550701lol":"漪漪子",
-	"jd_4333d5dc1ac5f":"舒楠子"
+	"jd_4333d5dc1ac5f":"舒楠子",
+  "realm_":"泽子怪"
 }
 let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
 const $ = new Env('京东资产变动通知');

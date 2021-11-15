@@ -21,6 +21,7 @@ let roleMap = {
 }
 let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
 let username = ""
+let helpTuanLenght = 3 
 
 
 if ($.isNode()) {
@@ -84,7 +85,12 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
             $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
             if ($.canHelp && (cookiesArr.length > $.assistNum)) {
                 if (tuanList.length) that.log(`开始账号内部互助 赚京豆-瓜分京豆 活动，优先内部账号互助`)
+
                 for (let j = 0; j < tuanList.length; ++j) {
+                    message += "<font color=\'#FFA500\'>" + `开团码 【${tuanList[j]['assistedPinEncrypted']}】` + "</font> \n\n"
+                }
+
+                for (let j = 0; j < tuanList.length  && j < helpTuanLenght; ++j) {
                     that.log(`账号 ${$.UserName} 开始给 【${tuanList[j]['assistedPinEncrypted']}】助力`)
                     message += "<font color=\'#FFA500\'>" + `账号 ${$.UserName} 开始给 【${tuanList[j]['assistedPinEncrypted']}】助力` + "</font> \n\n"
                     await helpFriendTuan(tuanList[j])
@@ -549,6 +555,7 @@ async function distributeBeanActivity() {
         await getUserTuanInfo()
         if (!$.tuan && ($.assistStatus === 3 || $.assistStatus === 2 || $.assistStatus === 0) && $.canStartNewAssist) {
             that.log(`准备再次开团`)
+            message += "<font color=\'#FFA500\'>" + '助力结果：助力成功\n' + "</font> \n\n"
             await openTuan()
             if ($.hasOpen) await getUserTuanInfo()
         }
@@ -585,14 +592,36 @@ function helpFriendTuan(body) {
                     if (safeGet(data)) {
                         data = JSON.parse(data);
                         if (data.success) {
+                            message += "<font color=\'#FFA500\'>" + '助力结果：助力成功\n' + "</font> \n\n"
                             that.log('助力结果：助力成功\n')
                         } else {
-                            if (data.resultCode === '9200008') that.log('助力结果：不能助力自己\n')
-                            else if (data.resultCode === '9200011') that.log('助力结果：已经助力过\n')
-                            else if (data.resultCode === '2400205') that.log('助力结果：团已满\n')
-                            else if (data.resultCode === '2400203') { that.log('助力结果：助力次数已耗尽\n'); $.canHelp = false }
-                            else if (data.resultCode === '9000000') { that.log('助力结果：活动火爆，跳出\n'); $.canHelp = false }
-                            else that.log(`助力结果：未知错误\n${JSON.stringify(data)}\n\n`)
+                            if (data.resultCode === '9200008') {
+                                that.log('助力结果：不能助力自己\n')
+                                message += "<font color=\'#FFA500\'>" + '助力结果：不能助力自己\n' + "</font> \n\n"
+                            }
+                            else if (data.resultCode === '9200011') {
+                                that.log('助力结果：已经助力过\n')
+                                message += "<font color=\'#FFA500\'>" + '助力结果：已经助力过\n' + "</font> \n\n"
+                            }
+                            else if (data.resultCode === '2400205') {
+                                that.log('助力结果：团已满\n')
+                                message += "<font color=\'#FFA500\'>" + '助力结果：团已满\n' + "</font> \n\n"
+                            }
+                            else if (data.resultCode === '2400203') {
+                                that.log('助力结果：助力次数已耗尽\n');
+                                $.canHelp = false
+                                message += "<font color=\'#FFA500\'>" + '助力结果：助力次数已耗尽\n' + "</font> \n\n"
+                            }
+
+                            else if (data.resultCode === '9000000') {
+                                that.log('助力结果：活动火爆，跳出\n');
+                                $.canHelp = false
+                                message += "<font color=\'#FFA500\'>" + '助力结果：活动火爆，跳出\n' + "</font> \n\n"
+                            }
+                            else {
+                                that.log(`助力结果：未知错误\n${JSON.stringify(data)}\n\n`)
+                                message += "<font color=\'#FFA500\'>" + `助力结果：未知错误\n${JSON.stringify(data)}\n\n` + "</font> \n\n"
+                            }
                         }
                     }
                 }
@@ -621,10 +650,13 @@ function getUserTuanInfo() {
                             that.log(`assistStatus ${data.data.assistStatus}`)
                             if (data.data.assistStatus === 1 && !data.data.canStartNewAssist) {
                                 that.log(`已开团(未达上限)，但团成员人未满\n\n`)
+                                message += "<font color=\'#FFA500\'>" + `已开团(未达上限)，但团成员人未满` + "</font> \n\n"
                             } else if (data.data.assistStatus === 3 && data.data.canStartNewAssist) {
                                 that.log(`已开团(未达上限)，团成员人已满\n\n`)
+                                message += "<font color=\'#FFA500\'>" + `已开团(未达上限)，团成员人已满` + "</font> \n\n"
                             } else if (data.data.assistStatus === 3 && !data.data.canStartNewAssist) {
                                 that.log(`今日开团已达上限，且当前团成员人已满\n\n`)
+                                message += "<font color=\'#FFA500\'>" + `今日开团已达上限，且当前团成员人已满` + "</font> \n\n"
                             }
                             if (data.data && !data.data.canStartNewAssist) {
                                 $.tuan = {

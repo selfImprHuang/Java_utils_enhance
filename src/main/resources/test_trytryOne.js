@@ -35,7 +35,8 @@ let roleMap = {
   "381550701lol": "漪漪子",
   "jd_4333d5dc1ac5f": "舒楠子",
   "jd_66ea783827d30": "军子",
-  "jd_4311ac0ff4456": "居子"
+  "jd_4311ac0ff4456": "居子",
+  "realm_":"泽子怪"
 }
 
 const URL = 'https://api.m.jd.com/client.action'
