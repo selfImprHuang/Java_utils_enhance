@@ -14,13 +14,13 @@ let roleMap = {
     "jd_4521b375ebb5d": "锟子怪",
     "jd_542c10c0222bc": "康子怪",
     "jd_66dcb31363ef6": "涛子怪",
-    "jd_45d917547c763": "跑腿小怪",
+    "jd_45d917547c763": "跑腿小怪C",
     "417040678_m": "斌子怪",
     "jd_73d88459d908e": "杰杰子",
     "381550701lol": "漪漪子",
     "jd_4333d5dc1ac5f": "舒楠子",
-    "jd_66ea783827d30": "军子",
-    "jd_4311ac0ff4456": "居子"
+    "jd_66ea783827d30": "跑腿小怪A",
+    "jd_4311ac0ff4456": "跑腿小怪B"
 }
 let message = '', subTitle = '', option = {}, isFruitFinished = false;
 const retainWater = 100;//保留水滴大于多少g,默认100g;
@@ -113,7 +113,7 @@ async function jdFruit() {
         await initForFarm();
         if ($.farmInfo.farmUserPro) {
             // option['media-url'] = $.farmInfo.farmUserPro.goodsImage;
-            message = message + "<font color=\'#778899\' size=2>【水果名称】 " + `${$.farmInfo.farmUserPro.name}` + "</font>\n\n";
+            message += "<font color=\'#778899\' size=2>【水果名称】 " + `${$.farmInfo.farmUserPro.name}` + "</font>\n\n";
             message += "<font color=\'#778899\' size=2>【已兑换水果】" + `${$.farmInfo.farmUserPro.winTimes}` + "次</font>\n\n";
             that.log(`\n【动动账号${$.index}（${$.nickName || $.UserName}）的${$.name}好友互助码】${$.farmInfo.farmUserPro.shareCode}\n`);
             that.log(`\n【已成功兑换水果】${$.farmInfo.farmUserPro.winTimes}次\n`);
@@ -173,12 +173,14 @@ async function doDailyTask() {
         await signForFarm(); //签到
         if ($.signResult.code === "0") {
             that.log(`【签到成功】获得${$.signResult.amount}g💧\\n`)
+            message += "<font color=\'#778899\' size=2>" +`【签到成功】获得${$.signResult.amount}g💧` + "</font>\n\n";
             //message += `【签到成功】获得${$.signResult.amount}g💧\n`//连续签到${signResult.signDay}天
         } else {
             // message += `签到失败,详询日志\n`;
             that.log(`签到结果:  ${JSON.stringify($.signResult)}`);
         }
     } else {
+        message += "<font color=\'#778899\' size=2>" +`今天已签到,连续签到${$.farmTask.signInit.totalSigned},下次签到可得${$.farmTask.signInit.signEnergyEachAmount}g` + "</font>\n\n";
         that.log(`今天已签到,连续签到${$.farmTask.signInit.totalSigned},下次签到可得${$.farmTask.signInit.signEnergyEachAmount}g\n`);
     }
     // 被水滴砸中
@@ -186,6 +188,7 @@ async function doDailyTask() {
     if ($.farmInfo.todayGotWaterGoalTask.canPop) {
         await gotWaterGoalTaskForFarm();
         if ($.goalResult.code === '0') {
+            message += "<font color=\'#778899\' size=2>" +`【被水滴砸中】获得${$.goalResult.addEnergy}g💧` + "</font>\n\n";
             that.log(`【被水滴砸中】获得${$.goalResult.addEnergy}g💧\\n`);
             // message += `【被水滴砸中】获得${$.goalResult.addEnergy}g💧\n`
         }
@@ -214,6 +217,7 @@ async function doDailyTask() {
                     browseSuccess++
                 } else {
                     browseFail++
+                    // message += "<font color=\'#778899\' size=2>" +`领取浏览广告奖励结果:  ${JSON.stringify($.browseRwardResult)}` + "</font>\n\n";
                     that.log(`领取浏览广告奖励结果:  ${JSON.stringify($.browseRwardResult)}`)
                 }
             } else {
@@ -223,9 +227,11 @@ async function doDailyTask() {
         }
         if (browseFail > 0) {
             that.log(`【广告浏览】完成${browseSuccess}个,失败${browseFail},获得${browseReward}g💧\\n`);
+            message += "<font color=\'#778899\' size=2>" +`【广告浏览】完成${browseSuccess}个,失败${browseFail},获得${browseReward}g💧` + "</font>\n\n";
             // message += `【广告浏览】完成${browseSuccess}个,失败${browseFail},获得${browseReward}g💧\n`;
         } else {
             that.log(`【广告浏览】完成${browseSuccess}个,获得${browseReward}g💧\n`);
+            message += "<font color=\'#778899\' size=2>" +`【广告浏览】完成${browseSuccess}个,获得${browseReward}g💧` + "</font>\n\n";
             // message += `【广告浏览】完成${browseSuccess}个,获得${browseReward}g💧\n`;
         }
     } else {
@@ -237,9 +243,11 @@ async function doDailyTask() {
         await gotThreeMealForFarm();
         if ($.threeMeal.code === "0") {
             that.log(`【定时领水】获得${$.threeMeal.amount}g💧\n`);
+            message += "<font color=\'#778899\' size=2>" +`【定时领水】获得${$.threeMeal.amount}g💧` + "</font>\n\n";
             // message += `【定时领水】获得${$.threeMeal.amount}g💧\n`;
         } else {
             // message += `【定时领水】失败,详询日志\n`;
+            message += "<font color=\'#778899\' size=2>" +`定时领水成功结果:  ${JSON.stringify($.threeMeal)}` + "</font>\n\n";
             that.log(`定时领水成功结果:  ${JSON.stringify($.threeMeal)}`);
         }
     } else {
@@ -252,6 +260,7 @@ async function doDailyTask() {
         }
     } else {
         that.log(`给${$.farmTask.waterFriendTaskInit.waterFriendMax}个好友浇水任务已完成\n`)
+        message += "<font color=\'#778899\' size=2>" +`给${$.farmTask.waterFriendTaskInit.waterFriendMax}个好友浇水任务已完成` + "</font>\n\n";
     }
     // await Promise.all([
     //   clockInIn(),//打卡领水
@@ -346,8 +355,10 @@ async function getFirstWaterAward() {
         if ($.firstWaterReward.code === '0') {
             that.log(`【首次浇水奖励】获得${$.firstWaterReward.amount}g💧\n`);
             // message += `【首次浇水奖励】获得${$.firstWaterReward.amount}g💧\n`;
+            message += "<font color=\'#778899\' size=2>" +`【首次浇水奖励】获得${$.firstWaterReward.amount}g💧` + "</font>\n\n";
         } else {
             // message += '【首次浇水奖励】领取奖励失败,详询日志\n';
+            message += "<font color=\'#778899\' size=2>" +'【首次浇水奖励】领取奖励失败,详询日志' + "</font>\n\n";
             that.log(`领取首次浇水奖励结果:  ${JSON.stringify($.firstWaterReward)}`);
         }
     } else {
@@ -362,12 +373,15 @@ async function getTenWaterAward() {
         if ($.totalWaterReward.code === '0') {
             that.log(`【十次浇水奖励】获得${$.totalWaterReward.totalWaterTaskEnergy}g💧\n`);
             // message += `【十次浇水奖励】获得${$.totalWaterReward.totalWaterTaskEnergy}g💧\n`;
+            message += "<font color=\'#778899\' size=2>" +`【十次浇水奖励】获得${$.totalWaterReward.totalWaterTaskEnergy}g💧` + "</font>\n\n";
         } else {
             // message += '【十次浇水奖励】领取奖励失败,详询日志\n';
+            message += "<font color=\'#778899\' size=2>" +`领取10次浇水奖励结果:  ${JSON.stringify($.totalWaterReward)}` + "</font>\n\n";
             that.log(`领取10次浇水奖励结果:  ${JSON.stringify($.totalWaterReward)}`);
         }
     } else if ($.farmTask.totalWaterTaskInit.totalWaterTaskTimes < $.farmTask.totalWaterTaskInit.totalWaterTaskLimit) {
         // message += `【十次浇水奖励】任务未完成，今日浇水${$.farmTask.totalWaterTaskInit.totalWaterTaskTimes}次\n`;
+        message += "<font color=\'#778899\' size=2>" +`【十次浇水奖励】任务未完成，今日浇水${$.farmTask.totalWaterTaskInit.totalWaterTaskTimes}次` + "</font>\n\n";
         that.log(`【十次浇水奖励】任务未完成，今日浇水${$.farmTask.totalWaterTaskInit.totalWaterTaskTimes}次\n`);
     }
     that.log('finished 水果任务完成!');
@@ -499,6 +513,7 @@ function gotStageAward() {
             if ($.gotStageAwardForFarmRes.code === '0') {
                 // message += `【果树发芽了】奖励${$.gotStageAwardForFarmRes.addEnergy}\n`;
                 that.log(`【果树发芽了】奖励${$.gotStageAwardForFarmRes.addEnergy}\n`);
+                message += "<font color=\'#778899\' size=2>" + `【果树发芽了】奖励${$.gotStageAwardForFarmRes.addEnergy}` + "</font>\n\n";
             }
         } else if ($.waterResult.waterStatus === 1) {
             that.log('果树开花了,奖励40g水滴');
@@ -507,6 +522,7 @@ function gotStageAward() {
             if ($.gotStageAwardForFarmRes.code === '0') {
                 // message += `【果树开花了】奖励${$.gotStageAwardForFarmRes.addEnergy}g💧\n`;
                 that.log(`【果树开花了】奖励${$.gotStageAwardForFarmRes.addEnergy}g💧\n`);
+                message += "<font color=\'#778899\' size=2>" +`【果树开花了】奖励${$.gotStageAwardForFarmRes.addEnergy}g💧` + "</font>\n\n";
             }
         } else if ($.waterResult.waterStatus === 2) {
             that.log('果树长出小果子啦, 奖励50g水滴');
@@ -515,6 +531,7 @@ function gotStageAward() {
             if ($.gotStageAwardForFarmRes.code === '0') {
                 // message += `【果树结果了】奖励${$.gotStageAwardForFarmRes.addEnergy}g💧\n`;
                 that.log(`【果树结果了】奖励${$.gotStageAwardForFarmRes.addEnergy}g💧\n`);
+                message += "<font color=\'#778899\' size=2>" +`【果树结果了】奖励${$.gotStageAwardForFarmRes.addEnergy}g💧` + "</font>\n\n";
             }
         }
         resolve()
@@ -606,6 +623,7 @@ async function turntableFarm() {
             }
             if (lotteryResult) {
                 that.log(`【天天抽奖】${lotteryResult.substr(0, lotteryResult.length - 1)}\n`)
+                message += "<font color=\'#778899\' size=2>" + `【天天抽奖】${lotteryResult.substr(0, lotteryResult.length - 1)}` + "</font>\n\n";
                 // message += `【天天抽奖】${lotteryResult.substr(0, lotteryResult.length - 1)}\n`;
             }
         } else {
@@ -618,39 +636,69 @@ async function turntableFarm() {
 //领取额外奖励水滴
 async function getExtraAward() {
     await masterHelpTaskInitForFarm();
-    if ($.masterHelpResult.code === '0') {
-        if ($.masterHelpResult.masterHelpPeoples && $.masterHelpResult.masterHelpPeoples.length >= 5) {
-            // 已有五人助力。领取助力后的奖励
-            if (!$.masterHelpResult.masterGotFinal) {
-                await masterGotFinishedTaskForFarm();
-                if ($.masterGotFinished.code === '0') {
-                    that.log(`已成功领取好友助力奖励：【${$.masterGotFinished.amount}】g水`);
-                    message += "<font color=\'#778899\' size=2>【额外奖励】" + `${$.masterGotFinished.amount}` + "g水领取成功</font>\n\n";
-                }
-            } else {
-                that.log("已经领取过5好友助力额外奖励");
-                message += "<font color=\'#BA55D3\' size=2>【水果🍉进度】" + `【额外奖励】已被领取过\n` + "</font>\n\n";
-            }
-        } else {
-            that.log("助力好友未达到5个");
-            message += "<font color=\'#778899\' size=2>【额外奖励】领取失败,原因：给您助力的人未达5个</font>\n\n";
-        }
-        if ($.masterHelpResult.masterHelpPeoples && $.masterHelpResult.masterHelpPeoples.length > 0) {
-            let str = '';
-            $.masterHelpResult.masterHelpPeoples.map((item, index) => {
-                if (index === ($.masterHelpResult.masterHelpPeoples.length - 1)) {
-                    str += item.nickName || "匿名用户";
-                } else {
-                    str += (item.nickName || "匿名用户") + ',';
-                }
-                let date = new Date(item.time);
-                let time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getMinutes();
-                that.log(`\n动动昵称【${item.nickName || "匿名用户"}】 在 ${time} 给您助过力\n`);
-            })
-            message += "<font color=\'#778899\' size=2>【助力您的好友】 " + `${str}` + "</font>\n\n"
-        }
-        that.log('领取额外奖励水滴结束\n');
+    await masterGotFinishedTaskForFarm();
+    //修改为一定会去尝试领取额外奖励
+    if ($.masterGotFinished.code === '0') {
+        that.log(`已成功领取好友助力奖励：【${$.masterGotFinished.amount}】g水`);
+        message += "<font color=\'#778899\' size=2>【额外奖励】" + `${$.masterGotFinished.amount}` + "g水领取成功</font>\n\n";
     }
+    if ($.masterHelpResult.masterGotFinal) { 
+        that.log("已经领取过5好友助力额外奖励");
+        message += "<font color=\'#BA55D3\' size=2>【水果🍉进度】" + `【额外奖励】已被领取过\n` + "</font>\n\n";
+    }
+    if ($.masterHelpResult.code != '0') {
+        that.log("助力好友未达到5个");
+            message += "<font color=\'#778899\' size=2>【额外奖励】领取失败,原因：给您助力的人未达5个</font>\n\n";
+    }
+    if ($.masterHelpResult.masterHelpPeoples && $.masterHelpResult.masterHelpPeoples.length > 0) {
+        let str = '';
+        $.masterHelpResult.masterHelpPeoples.map((item, index) => {
+            if (index === ($.masterHelpResult.masterHelpPeoples.length - 1)) {
+                str += item.nickName || "匿名用户";
+            } else {
+                str += (item.nickName || "匿名用户") + ',';
+            }
+            let date = new Date(item.time);
+            let time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getMinutes();
+            that.log(`\n动动昵称【${item.nickName || "匿名用户"}】 在 ${time} 给您助过力\n`);
+        })
+        message += "<font color=\'#778899\' size=2>【助力您的好友】 " + `${str}` + "</font>\n\n"
+    }
+    that.log('领取额外奖励水滴结束\n');
+
+    // if ($.masterHelpResult.code === '0') {
+    //     if ($.masterHelpResult.masterHelpPeoples && $.masterHelpResult.masterHelpPeoples.length >= 5) {
+    //         // 已有五人助力。领取助力后的奖励
+    //         if (!$.masterHelpResult.masterGotFinal) {   
+    //             await masterGotFinishedTaskForFarm();
+    //             if ($.masterGotFinished.code === '0') {
+    //                 that.log(`已成功领取好友助力奖励：【${$.masterGotFinished.amount}】g水`);
+    //                 message += "<font color=\'#778899\' size=2>【额外奖励】" + `${$.masterGotFinished.amount}` + "g水领取成功</font>\n\n";
+    //             }
+    //         } else {
+    //             that.log("已经领取过5好友助力额外奖励");
+    //             message += "<font color=\'#BA55D3\' size=2>【水果🍉进度】" + `【额外奖励】已被领取过\n` + "</font>\n\n";
+    //         }
+    //     } else {
+    //         that.log("助力好友未达到5个");
+    //         message += "<font color=\'#778899\' size=2>【额外奖励】领取失败,原因：给您助力的人未达5个</font>\n\n";
+    //     }
+    //     if ($.masterHelpResult.masterHelpPeoples && $.masterHelpResult.masterHelpPeoples.length > 0) {
+    //         let str = '';
+    //         $.masterHelpResult.masterHelpPeoples.map((item, index) => {
+    //             if (index === ($.masterHelpResult.masterHelpPeoples.length - 1)) {
+    //                 str += item.nickName || "匿名用户";
+    //             } else {
+    //                 str += (item.nickName || "匿名用户") + ',';
+    //             }
+    //             let date = new Date(item.time);
+    //             let time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getMinutes();
+    //             that.log(`\n动动昵称【${item.nickName || "匿名用户"}】 在 ${time} 给您助过力\n`);
+    //         })
+    //         message += "<font color=\'#778899\' size=2>【助力您的好友】 " + `${str}` + "</font>\n\n"
+    //     }
+    //     that.log('领取额外奖励水滴结束\n');
+    // }
 }
 
 function getHelp() {
