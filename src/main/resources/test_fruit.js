@@ -686,7 +686,7 @@ async function getExtraAward() {
                         }
                     }
                 }
-                message += `【额外奖励】${num}g水领取成功\n`;
+                // message += `【额外奖励】${num}g水领取成功\n`;
                 message = message + "<font color=\'#778899\' size=2> " + `【额外奖励】${num}g水领取成功\n` + "</font>\n\n";
             } else if ($.farmAssistResult.status === 3) {
                 console.log("已经领取过8好友助力额外奖励");
