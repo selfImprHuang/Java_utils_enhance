@@ -188,7 +188,7 @@ async function doDailyTask() {
     if ($.farmInfo.todayGotWaterGoalTask.canPop) {
         await gotWaterGoalTaskForFarm();
         if ($.goalResult.code === '0') {
-            message += "<font color=\'#778899\' size=2>" +`【被水滴砸中】获得${$.goalResult.addEnergy}g💧` + "</font>\n\n";
+            // message += "<font color=\'#778899\' size=2>" +`【被水滴砸中】获得${$.goalResult.addEnergy}g💧` + "</font>\n\n";
             that.log(`【被水滴砸中】获得${$.goalResult.addEnergy}g💧\\n`);
             // message += `【被水滴砸中】获得${$.goalResult.addEnergy}g💧\n`
         }
@@ -623,7 +623,7 @@ async function turntableFarm() {
             }
             if (lotteryResult) {
                 that.log(`【天天抽奖】${lotteryResult.substr(0, lotteryResult.length - 1)}\n`)
-                message += "<font color=\'#778899\' size=2>" + `【天天抽奖】${lotteryResult.substr(0, lotteryResult.length - 1)}` + "</font>\n\n";
+                // message += "<font color=\'#778899\' size=2>" + `【天天抽奖】${lotteryResult.substr(0, lotteryResult.length - 1)}` + "</font>\n\n";
                 // message += `【天天抽奖】${lotteryResult.substr(0, lotteryResult.length - 1)}\n`;
             }
         } else {
@@ -637,6 +637,7 @@ async function turntableFarm() {
 async function getExtraAward() {
     await masterHelpTaskInitForFarm();
     await masterGotFinishedTaskForFarm();
+    console.log(JSON.stringify($.masterHelpResult))
     //修改为一定会去尝试领取额外奖励
     if ($.masterGotFinished.code === '0') {
         that.log(`已成功领取好友助力奖励：【${$.masterGotFinished.amount}】g水`);
