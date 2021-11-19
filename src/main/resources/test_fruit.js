@@ -787,14 +787,19 @@ async function masterHelpShare() {
                 that.log(`【助力好友结果】: 已成功给【${$.helpResult.helpResult.masterUserInfo.nickName}】助力`);
                 that.log(`给好友【${$.helpResult.helpResult.masterUserInfo.nickName}】助力获得${$.helpResult.helpResult.salveHelpAddWater}g水滴`)
                 helpSuccessPeoples += ($.helpResult.helpResult.masterUserInfo.nickName || '匿名用户') + ',';
+                message += "<font color=\'#778899\' size=2>" + `给好友【${$.helpResult.helpResult.masterUserInfo.nickName}】助力获得${$.helpResult.helpResult.salveHelpAddWater}g水滴` + "</font>\n\n";
             } else if ($.helpResult.helpResult.code === '8') {
                 that.log(`【助力好友结果】: 助力【${$.helpResult.helpResult.masterUserInfo.nickName}】失败，您今天助力次数已耗尽`);
+                message += "<font color=\'#778899\' size=2>" + `【助力好友结果】: 助力【${$.helpResult.helpResult.masterUserInfo.nickName}】失败，您今天助力次数已耗尽` + "</font>\n\n";
             } else if ($.helpResult.helpResult.code === '9') {
                 that.log(`【助力好友结果】: 之前给【${$.helpResult.helpResult.masterUserInfo.nickName}】助力过了`);
+                message += "<font color=\'#778899\' size=2>" + `【助力好友结果】: 之前给【${$.helpResult.helpResult.masterUserInfo.nickName}】助力过了` + "</font>\n\n";
             } else if ($.helpResult.helpResult.code === '10') {
                 that.log(`【助力好友结果】: 好友【${$.helpResult.helpResult.masterUserInfo.nickName}】已满五人助力`);
+                message += "<font color=\'#778899\' size=2>" + `【助力好友结果】: 好友【${$.helpResult.helpResult.masterUserInfo.nickName}】已满五人助力` + "</font>\n\n";
             } else {
                 that.log(`助力其他情况：${JSON.stringify($.helpResult.helpResult)}`);
+                message += "<font color=\'#778899\' size=2>" + `助力其他情况：${JSON.stringify($.helpResult.helpResult)}` + "</font>\n\n";
             }
             that.log(`【今日助力次数还剩】${$.helpResult.helpResult.remainTimes}次\n`);
             remainTimes = $.helpResult.helpResult.remainTimes;
@@ -804,6 +809,7 @@ async function masterHelpShare() {
             }
         } else {
             that.log(`助力失败::${JSON.stringify($.helpResult)}`);
+            message += "<font color=\'#778899\' size=2>" + `助力失败::${JSON.stringify($.helpResult)}` + "</font>\n\n";
         }
     }
     if (helpSuccessPeoples && helpSuccessPeoples.length > 0) {
@@ -812,6 +818,7 @@ async function masterHelpShare() {
     if (salveHelpAddWater > 0) {
         // message += `【助力好友👬】获得${salveHelpAddWater}g💧\n`;
         that.log(`【助力好友👬】获得${salveHelpAddWater}g💧\n`);
+        message += "<font color=\'#778899\' size=2>" + `【助力好友👬】获得${salveHelpAddWater}g💧` + "</font>\n\n";
     }
     message += "<font color=\'#778899\' size=2>" + `【今日剩余助力👬】${remainTimes}次\n` + "</font>\n\n";
     that.log('助力好友结束，即将开始领取额外水滴奖励\n');
