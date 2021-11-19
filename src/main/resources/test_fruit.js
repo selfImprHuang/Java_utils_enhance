@@ -638,6 +638,9 @@ async function getExtraAward() {
     await masterHelpTaskInitForFarm();
     await masterGotFinishedTaskForFarm();
     console.log(JSON.stringify($.masterHelpResult))
+    message += "<font color=\'#778899\' size=2>【额外奖励】" + `${$.masterHelpResult}` + "g水领取成功</font>\n\n";
+    message += "<font color=\'#778899\' size=2>【额外奖励】" + `${$.masterGotFinished}` + "g水领取成功</font>\n\n";
+    
     //修改为一定会去尝试领取额外奖励
     if ($.masterGotFinished.code === '0') {
         that.log(`已成功领取好友助力奖励：【${$.masterGotFinished.amount}】g水`);
