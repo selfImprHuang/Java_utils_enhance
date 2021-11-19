@@ -20,7 +20,12 @@ let roleMap = {
     "381550701lol": "漪漪子",
     "jd_4333d5dc1ac5f": "舒楠子",
     "jd_66ea783827d30": "跑腿小怪A",
-    "jd_4311ac0ff4456": "跑腿小怪B"
+    "jd_4311ac0ff4456": "跑腿小怪B",
+    "好吧好吧5577": "wq_18797925088",
+    "jd_qapvwBDaRqgW": "wgh_19970291531",
+    "18070420956_p": "刘吴奇_13380353522",
+    "羊爱咩咩": "yxb_15390868558",
+    "18709853042_p": "wzx_18709853042",
 }
 let message = '', subTitle = '', option = {}, isFruitFinished = false;
 const retainWater = 100;//保留水滴大于多少g,默认100g;
@@ -55,7 +60,6 @@ const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%2
             that.log(`\n开始【动动账号${$.index}】${$.nickName || $.UserName}\n`);
             if (!$.isLogin) {
                 $.msg($.name, `【提示】cookie已失效`, `动动账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
-
                 if ($.isNode()) {
                     await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `动动账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
                 }
@@ -86,14 +90,13 @@ const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%2
             console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
             if (!$.isLogin) {
                 $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
-
                 if ($.isNode()) {
                     await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
                 }
                 continue
             }
-            await masterHelpShare();//助力好友
             //互助 账号内部互助
+            await masterHelpShare();//助力好友
         }
     }
     postToDingTalk(message)
@@ -151,16 +154,11 @@ async function jdFruit() {
             message += "<font color=\'#778899\' size=2>【已兑换水果】" + `${$.farmInfo.farmUserPro.winTimes}` + "次</font>\n\n";
             that.log(`\n【动动账号${$.index}（${$.nickName || $.UserName}）的${$.name}好友互助码】${$.farmInfo.farmUserPro.shareCode}\n`);
             that.log(`\n【已成功兑换水果】${$.farmInfo.farmUserPro.winTimes}次\n`);
-            newShareCodes.push($.farmInfo.farmUserPro.shareCode);
-            await setHelp();
-            await setHelp();
             await setHelp();
             if ($.farmInfo.treeState === 2 || $.farmInfo.treeState === 3) {
                 option['open-url'] = urlSchema;
-
                 mes = "<font color=\'#778899\' size=2> " + `${getManName}` + "，你好\n\n【提醒⏰】" + fruitName + "已可领取\n请去动动APP或微信小程序查看\n点击弹窗即达</font>"
                 postToDingTalk2(mes)
-
                 $.msg($.name, ``, `【动动账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去动动APP或微信小程序查看\n点击弹窗即达`, option);
                 if ($.isNode()) {
                     await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName}水果已可领取`, `【动动账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去动动APP或微信小程序查看`);
@@ -174,7 +172,6 @@ async function jdFruit() {
                 $.msg($.name, ``, `【动动账号${$.index}】 ${$.nickName || $.UserName}\n【提醒⏰】您忘了种植新的水果\n请去动动APP或微信小程序选购并种植新的水果\n点击弹窗即达`, option);
                 mes = "<font color=\'#778899\' size=2> " + `${getManName}` + "，你好\n\n【提醒⏰】您忘了种植新的水果\n请去京东APP或微信小程序选购并种植新的水果</font>"
                 postToDingTalk2(mes)
-
                 if ($.isNode()) {
                     await notify.sendNotify(`${$.name} - 您忘了种植新的水果`, `动动账号${$.index} ${$.nickName}\n【提醒⏰】您忘了种植新的水果\n请去动动APP或微信小程序选购并种植新的水果`);
                 }
@@ -657,6 +654,7 @@ async function turntableFarm() {
             }
             if (lotteryResult) {
                 that.log(`【天天抽奖】${lotteryResult.substr(0, lotteryResult.length - 1)}\n`)
+                message += "<font color=\'#778899\' size=2>" + `【天天抽奖】${lotteryResult.length}次` + "</font>\n\n";
                 // message += "<font color=\'#778899\' size=2>" + `【天天抽奖】${lotteryResult.substr(0, lotteryResult.length - 1)}` + "</font>\n\n";
                 // message += `【天天抽奖】${lotteryResult.substr(0, lotteryResult.length - 1)}\n`;
             }
@@ -1127,13 +1125,13 @@ async function getFullCollectionReward() {
 //新版助力好友信息API
 async function farmAssistInit() {
     const functionId = arguments.callee.name.toString();
-    $.farmAssistResult = await request(functionId, {"version":14,"channel":1,"babelChannel":"120"});
-  }
-  //新版领取助力奖励API
-  async function receiveStageEnergy() {
+    $.farmAssistResult = await request(functionId, { "version": 14, "channel": 1, "babelChannel": "120" });
+}
+//新版领取助力奖励API
+async function receiveStageEnergy() {
     const functionId = arguments.callee.name.toString();
-    $.receiveStageEnergy = await request(functionId, {"version":14,"channel":1,"babelChannel":"120"});
-  }
+    $.receiveStageEnergy = await request(functionId, { "version": 14, "channel": 1, "babelChannel": "120" });
+}
 /**
  * 领取10次浇水奖励API
  */
@@ -1225,12 +1223,12 @@ async function lotteryMasterHelp() {
 async function masterGotFinishedTaskForFarm() {
     const functionId = arguments.callee.name.toString();
     $.masterGotFinished = await request(functionId);
-  }
+}
 //助力好友信息API
 async function masterHelpTaskInitForFarm() {
     const functionId = arguments.callee.name.toString();
     $.masterHelpResult = await request(functionId);
-  }
+}
 //接受对方邀请,成为对方好友的API
 async function inviteFriend() {
     $.inviteFriendRes = await request(`initForFarm`, {

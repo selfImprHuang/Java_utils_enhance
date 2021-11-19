@@ -605,7 +605,7 @@ async function plantShareSupportList() {
       }
     })
     console.log(`【助力您的好友】共${friendList.length}人`)
-    // message += "<font color=\'#778899\' size=2>" +  `【助力您的好友】共${friendList.length}人` + "</font>\n\n";
+    message += "<font color=\'#778899\' size=2>" +  `【助力您的好友】共${friendList.length}人` + "</font>\n\n";
   } else {
     console.log(`异常情况：${JSON.stringify($.shareSupportList)}`)
   }
