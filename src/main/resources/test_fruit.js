@@ -667,30 +667,42 @@ async function turntableFarm() {
         that.log('初始化天天抽奖得好礼失败')
     }
 }
+
+
 //领取额外奖励水滴
 async function getExtraAward() {
-    await masterHelpTaskInitForFarm();
-    if ($.masterHelpResult.code === '0') {
-        if ($.masterHelpResult.masterHelpPeoples) {
-            // 已有五人助力。领取助力后的奖励
-            if (!$.masterHelpResult.masterGotFinal) {
-                await masterGotFinishedTaskForFarm();
-                if ($.masterGotFinished.code === '0') {
-                    console.log(`已成功领取好友助力奖励：【${$.masterGotFinished.amount}】g水`);
-                    message += `【额外奖励】${$.masterGotFinished.amount}g水领取成功\n`;
+    await farmAssistInit();
+    if ($.farmAssistResult.code === "0") {
+        if ($.farmAssistResult.assistFriendList && $.farmAssistResult.assistFriendList.length >= 2) {
+            if ($.farmAssistResult.status === 2) {
+                let num = 0;
+                for (let key of Object.keys($.farmAssistResult.assistStageList)) {
+                    let vo = $.farmAssistResult.assistStageList[key]
+                    if (vo.stageStaus === 2) {
+                        await receiveStageEnergy()
+                        if ($.receiveStageEnergy.code === "0") {
+                            console.log(`已成功领取第${key + 1}阶段好友助力奖励：【${$.receiveStageEnergy.amount}】g水`)
+                            num += $.receiveStageEnergy.amount
+                        }
+                    }
                 }
-            } else {
-                console.log("已经领取过5好友助力额外奖励");
-                message += `【额外奖励】已被领取过\n`;
+                message += `【额外奖励】${num}g水领取成功\n`;
+                message = message + "<font color=\'#778899\' size=2> " + `【额外奖励】${num}g水领取成功\n` + "</font>\n\n";
+            } else if ($.farmAssistResult.status === 3) {
+                console.log("已经领取过8好友助力额外奖励");
+                //   message += `【额外奖励】已被领取过\n`;
+                message = message + "<font color=\'#778899\' size=2> " + `已经领取过8好友助力额外奖励` + "</font>\n\n";
+
             }
         } else {
-            console.log("助力好友未达到5个");
-            message += `【额外奖励】领取失败,原因：给您助力的人未达5个\n`;
+            console.log("助力好友未达到2个");
+            // message += `【额外奖励】领取失败,原因：给您助力的人未达2个\n`;
+            message = message + "<font color=\'#778899\' size=2> " + `【额外奖励】领取失败,原因：给您助力的人未达2个\n` + "</font>\n\n";
         }
-        if ($.masterHelpResult.masterHelpPeoples && $.masterHelpResult.masterHelpPeoples.length > 0) {
+        if ($.farmAssistResult.assistFriendList && $.farmAssistResult.assistFriendList.length > 0) {
             let str = '';
-            $.masterHelpResult.masterHelpPeoples.map((item, index) => {
-                if (index === ($.masterHelpResult.masterHelpPeoples.length - 1)) {
+            $.farmAssistResult.assistFriendList.map((item, index) => {
+                if (index === ($.farmAssistResult.assistFriendList.length - 1)) {
                     str += item.nickName || "匿名用户";
                 } else {
                     str += (item.nickName || "匿名用户") + ',';
@@ -699,41 +711,52 @@ async function getExtraAward() {
                 let time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getMinutes();
                 console.log(`\n京东昵称【${item.nickName || "匿名用户"}】 在 ${time} 给您助过力\n`);
             })
-            message += `【助力您的好友】${str}\n`;
+            // message += `【助力您的好友】${str}\n`;
+            message = message + "<font color=\'#778899\' size=2> " + `【助力您的好友】${str}\n` + "</font>\n\n";
         }
         console.log('领取额外奖励水滴结束\n');
+    } else {
+        await masterHelpTaskInitForFarm();
+        if ($.masterHelpResult.code === '0') {
+            if ($.masterHelpResult.masterHelpPeoples && $.masterHelpResult.masterHelpPeoples.length >= 5) {
+                // 已有五人助力。领取助力后的奖励
+                if (!$.masterHelpResult.masterGotFinal) {
+                    await masterGotFinishedTaskForFarm();
+                    if ($.masterGotFinished.code === '0') {
+                        console.log(`已成功领取好友助力奖励：【${$.masterGotFinished.amount}】g水`);
+                        //   message += `【额外奖励】${$.masterGotFinished.amount}g水领取成功\n`;
+                        message = message + "<font color=\'#778899\' size=2> " + `【额外奖励】${$.masterGotFinished.amount}g水领取成功\n` + "</font>\n\n";
+                    }
+                } else {
+                    console.log("已经领取过5好友助力额外奖励");
+                    // message += `【额外奖励】已被领取过\n`;
+                    message = message + "<font color=\'#778899\' size=2> " + `【额外奖励】已被领取过\n` + "</font>\n\n";
+                }
+            } else {
+                console.log("助力好友未达到5个");
+                //   message += `【额外奖励】领取失败,原因：给您助力的人未达5个\n`;
+                message = message + "<font color=\'#778899\' size=2> " + `【额外奖励】领取失败,原因：给您助力的人未达5个\n` + "</font>\n\n";
+            }
+            if ($.masterHelpResult.masterHelpPeoples && $.masterHelpResult.masterHelpPeoples.length > 0) {
+                let str = '';
+                $.masterHelpResult.masterHelpPeoples.map((item, index) => {
+                    if (index === ($.masterHelpResult.masterHelpPeoples.length - 1)) {
+                        str += item.nickName || "匿名用户";
+                    } else {
+                        str += (item.nickName || "匿名用户") + ',';
+                    }
+                    let date = new Date(item.time);
+                    let time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getMinutes();
+                    console.log(`\n京东昵称【${item.nickName || "匿名用户"}】 在 ${time} 给您助过力\n`);
+                })
+                //   message += `【助力您的好友】${str}\n`;
+                message = message + "<font color=\'#778899\' size=2> " + `【助力您的好友】${str}\n` + "</font>\n\n";
+            }
+            console.log('领取额外奖励水滴结束\n');
+        }
     }
 }
 
-function getHelp() {
-    newShareCodes = [];
-    return new Promise(resolve => {
-        $.get({
-            url: "http://api.tyh52.com/act/get/jd_fruit/3"
-        }, (err, resp, data) => {
-            try {
-                if (data) {
-                    data = JSON.parse(data);
-                    if (data.code == 1) {
-                        let list = data.data;
-                        if (!(list instanceof Array)) {
-                            list = JSON.parse(list);
-                        }
-                        if (list.length > 0) {
-                            for (var i in list) {
-                                newShareCodes.push(list[i]);
-                            }
-                        }
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp);
-            } finally {
-                resolve(data);
-            }
-        })
-    });
-}
 
 function setHelp() {
     return new Promise(resolve => {
@@ -1101,6 +1124,16 @@ async function getFullCollectionReward() {
     })
 }
 
+//新版助力好友信息API
+async function farmAssistInit() {
+    const functionId = arguments.callee.name.toString();
+    $.farmAssistResult = await request(functionId, {"version":14,"channel":1,"babelChannel":"120"});
+  }
+  //新版领取助力奖励API
+  async function receiveStageEnergy() {
+    const functionId = arguments.callee.name.toString();
+    $.receiveStageEnergy = await request(functionId, {"version":14,"channel":1,"babelChannel":"120"});
+  }
 /**
  * 领取10次浇水奖励API
  */
@@ -1190,14 +1223,14 @@ async function lotteryMasterHelp() {
 
 //领取5人助力后的额外奖励API
 async function masterGotFinishedTaskForFarm() {
-    const functionId = 'masterGotFinishedTaskForFarm';
+    const functionId = arguments.callee.name.toString();
     $.masterGotFinished = await request(functionId);
-}
+  }
 //助力好友信息API
 async function masterHelpTaskInitForFarm() {
-    const functionId = 'masterHelpTaskInitForFarm';
+    const functionId = arguments.callee.name.toString();
     $.masterHelpResult = await request(functionId);
-}
+  }
 //接受对方邀请,成为对方好友的API
 async function inviteFriend() {
     $.inviteFriendRes = await request(`initForFarm`, {
