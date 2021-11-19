@@ -39,6 +39,28 @@ const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%2
     //先获取助力码
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
+            cookie = cookiesArr[i];
+            $.UserName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1])
+            $.index = i + 1;
+            $.isLogin = true;
+            $.nickName = '';
+            await TotalBean();
+            username = $.UserName
+            if (roleMap[username] != undefined) {
+                username = roleMap[username]
+            }
+            getManName = username
+            //加上名称
+            message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" + username + " </font> </font> \n\n "
+            that.log(`\n开始【动动账号${$.index}】${$.nickName || $.UserName}\n`);
+            if (!$.isLogin) {
+                $.msg($.name, `【提示】cookie已失效`, `动动账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
+
+                if ($.isNode()) {
+                    await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `动动账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
+                }
+                continue
+            }
             try {
                 await initForFarm();
                 if ($.farmInfo.farmUserPro) {
