@@ -1,5 +1,5 @@
 let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
-let dingtalk2 = "https://oapi.dingtalk.com/robot/send?access_token=1832f969da101ef8273e8ba2258f06f15ec34bc22282066b28ab617042a7a9b6";
+let dingtalk2 = "https://oapi.dingtalk.com/robot/send?access_token=04ab95f07aa0397e7167c6ea3a331bc7fcddbc4cda4a482b1e7e76755f97f6a1";
 let getManName = ""
 let roleMap = {
     "jd_4521b375ebb5d": "锟子怪",
@@ -176,11 +176,6 @@ async function jdFruit() {
     try {
         await initForFarm();
         if ($.farmInfo.farmUserPro) {
-            mes = "<font color=\'#988241\' size=4>【东东农场⏰】\n\n</font><font color=\'#8600FF\' size=4>" + `${getManName}` + "🐽</font><font color=\'#000000\' size=2>" +
-                "，你好:\n\n &ensp;  &ensp;  你的宝贝水果 </font><font color=\'#FF0080\' size=4>" + fruitName + "🐌</font><font color=\'#000000\' size=2> 熟透了,它叫你去找它.🐕" +
-                "\n\n&ensp;  &ensp;  如果你不要它😿，也可以把它作为红包🧧使用，一个水果等于6、12、25、50块红包(对应四个等级).\n\n&ensp;  &ensp; 然后 " +
-                "</font><font color=\'#EA0000\' size=3>记得再种一个水果🐊\n\n</font><font color=\'#000000\' size=2>"
-            postToDingTalk2(mes)
             // option['media-url'] = $.farmInfo.farmUserPro.goodsImage;
             message += "<font color=\'#778899\' size=2>【水果名称】 " + `${$.farmInfo.farmUserPro.name}` + "</font>\n\n";
             message += "<font color=\'#778899\' size=2>【已兑换水果】" + `${$.farmInfo.farmUserPro.winTimes}` + "次</font>\n\n";
@@ -190,7 +185,7 @@ async function jdFruit() {
             if ($.farmInfo.treeState === 2 || $.farmInfo.treeState === 3) {
                 option['open-url'] = urlSchema;
                 mes = "<font color=\'#988241\' size=4>【东东农场⏰】\n\n</font><font color=\'#8600FF\' size=4>" + `${getManName}` + "🐽</font><font color=\'#000000\' size=2>" +
-                    "，你好:\n\n &ensp;  &ensp;  你的宝贝水果 </font><font color=\'#FF0080\' size=4>" + fruitName + "🐌</font><font color=\'#000000\' size=2> 熟透了,它叫你去找它.🐕" +
+                    "，你好:\n\n &ensp;  &ensp;  你的宝贝水果 </font><font color=\'#FF0080\' size=4>" + `${$.farmInfo.farmUserPro.name}` + "</font><font color=\'#000000\' size=2> 熟透了,它叫你去找它." +
                     "\n\n&ensp;  &ensp;  如果你不要它😿，也可以把它作为红包🧧使用，一个水果等于6、12、25、50块红包(对应四个等级).\n\n&ensp;  &ensp; 然后 " +
                     "</font><font color=\'#EA0000\' size=3>记得再种一个水果🐊\n\n</font><font color=\'#000000\' size=2>"
                 postToDingTalk2(mes)
