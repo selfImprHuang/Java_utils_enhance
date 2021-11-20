@@ -176,6 +176,11 @@ async function jdFruit() {
     try {
         await initForFarm();
         if ($.farmInfo.farmUserPro) {
+            mes = "<font color=\'#988241\' size=4>【东东农场⏰】\n\n</font><font color=\'#8600FF\' size=4>" + `${getManName}` + "🐽</font><font color=\'#000000\' size=2>" +
+                "，你好:\n\n &ensp;  &ensp;  你的宝贝水果 </font><font color=\'#FF0080\' size=4>" + fruitName + "🐌</font><font color=\'#000000\' size=2> 熟透了,它叫你去找它.🐕" +
+                "\n\n&ensp;  &ensp;  如果你不要它😿，也可以把它作为红包🧧使用，一个水果等于6、12、25、50块红包(对应四个等级).\n\n&ensp;  &ensp; 然后 " +
+                "</font><font color=\'#EA0000\' size=3>记得再种一个水果🐊\n\n</font><font color=\'#000000\' size=2>"
+            postToDingTalk2(mes)
             // option['media-url'] = $.farmInfo.farmUserPro.goodsImage;
             message += "<font color=\'#778899\' size=2>【水果名称】 " + `${$.farmInfo.farmUserPro.name}` + "</font>\n\n";
             message += "<font color=\'#778899\' size=2>【已兑换水果】" + `${$.farmInfo.farmUserPro.winTimes}` + "次</font>\n\n";
@@ -184,7 +189,10 @@ async function jdFruit() {
             await setHelp();
             if ($.farmInfo.treeState === 2 || $.farmInfo.treeState === 3) {
                 option['open-url'] = urlSchema;
-                mes = "<font color=\'#778899\' size=2> " + `${getManName}` + "，你好\n\n【提醒⏰】" + fruitName + "已可领取\n请去动动APP或微信小程序查看\n点击弹窗即达</font>"
+                mes = "<font color=\'#988241\' size=4>【东东农场⏰】\n\n</font><font color=\'#8600FF\' size=4>" + `${getManName}` + "🐽</font><font color=\'#000000\' size=2>" +
+                    "，你好:\n\n &ensp;  &ensp;  你的宝贝水果 </font><font color=\'#FF0080\' size=4>" + fruitName + "🐌</font><font color=\'#000000\' size=2> 熟透了,它叫你去找它.🐕" +
+                    "\n\n&ensp;  &ensp;  如果你不要它😿，也可以把它作为红包🧧使用，一个水果等于6、12、25、50块红包(对应四个等级).\n\n&ensp;  &ensp; 然后 " +
+                    "</font><font color=\'#EA0000\' size=3>记得再种一个水果🐊\n\n</font><font color=\'#000000\' size=2>"
                 postToDingTalk2(mes)
                 $.msg($.name, ``, `【动动账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去动动APP或微信小程序查看\n点击弹窗即达`, option);
                 if ($.isNode()) {
