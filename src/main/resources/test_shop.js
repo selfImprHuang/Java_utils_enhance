@@ -17,6 +17,27 @@ cron "11 * * * *" script-path=jd_superMarket.js,tag=东东超市
 ==============小火箭=============
 东东超市 = type=cron,script-path=jd_superMarket.js, cronexpr="11 * * * *", timeout=3600, enable=true
  */
+let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
+let getManName = ""
+let roleMap = {
+  "jd_4521b375ebb5d": "锟子怪",
+  "jd_542c10c0222bc": "康子怪",
+  "jd_66dcb31363ef6": "涛子怪",
+  "jd_45d917547c763": "跑腿小怪C",
+  "417040678_m": "斌子怪",
+  "jd_73d88459d908e": "杰杰子",
+  "381550701lol": "漪漪子",
+  "jd_4333d5dc1ac5f": "舒楠子",
+  "jd_66ea783827d30": "跑腿小怪A",
+  "jd_4311ac0ff4456": "跑腿小怪B",
+  "好吧好吧5577": "wq_18797925088",
+  "jd_qapvwBDaRqgW": "wgh_19970291531",
+  "18070420956_p": "刘吴奇_13380353522",
+  "羊爱咩咩": "yxb_15390868558",
+  "18709853042_p": "wzx_18709853042",
+}
+let shareCode = []
+let username = ""
 const $ = new Env('东东超市');
 //Node.js用户请在jdCookie.js处填写京东ck;
 //IOS等用户直接用NobyDa的jd cookie
@@ -39,8 +60,9 @@ let shareCodes = []
 !(async () => {
   await requireConfig();
   if (!cookiesArr[0]) {
-    $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
+    $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
   }
+  message += "<font color=\'#FFA500\'>[通知] </font><font color=\'#006400\' size='3'>超市</font> \n\n"
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -52,30 +74,36 @@ let shareCodes = []
       $.isLogin = true;
       $.nickName = '';
       await TotalBean();
+      username = $.UserName
+      if (roleMap[username] != undefined) {
+        username = roleMap[username]
+      }
+      getManName = username
+      //加上名称
+      message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" + username + " </font> </font> \n\n "
       console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
       if (!$.isLogin) {
-        $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
+        $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
 
         if ($.isNode()) {
           await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
         }
         continue
       }
-      message = '';
       subTitle = '';
-      //await shareCodesFormat();//格式化助力码
       await jdSuperMarket();
       await showMsg();
-      // await businessCircleActivity();
+      message += "----\n\n"
     }
   }
 })()
-    .catch((e) => {
-      $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
-    })
-    .finally(() => {
-      $.done();
-    })
+  .catch((e) => {
+    $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+  })
+  .finally(() => {
+    $.done();
+    postToDingTalk(message)
+  })
 async function jdSuperMarket() {
   try {
     await smtgHome();
@@ -108,7 +136,7 @@ function showMsg() {
   $.log(`【京东账号${$.index}】${$.nickName}\n${message}`);
   jdNotify = $.getdata('jdSuperMarketNotify') ? $.getdata('jdSuperMarketNotify') : jdNotify;
   if (!jdNotify || jdNotify === 'false') {
-    $.msg($.name, subTitle ,`【京东账号${$.index}】${$.nickName}\n${message}`);
+    $.msg($.name, subTitle, `【京东账号${$.index}】${$.nickName}\n${message}`);
   }
 }
 //抽奖功能(招财进宝)
@@ -150,7 +178,7 @@ async function doDailyTask() {
     const taskList = smtgQueryShopTaskRes.data.result.taskList;
     console.log(`\n日常赚钱任务       完成状态`)
     for (let item of taskList) {
-      console.log(` ${item['title'].length < 4 ? item['title']+`\xa0` : item['title'].slice(-4)}         ${item['finishNum'] === item['targetNum'] ? '已完成':'未完成'} ${item['finishNum']}/${item['targetNum']}`)
+      console.log(` ${item['title'].length < 4 ? item['title'] + `\xa0` : item['title'].slice(-4)}         ${item['finishNum'] === item['targetNum'] ? '已完成' : '未完成'} ${item['finishNum']}/${item['targetNum']}`)
     }
     for (let item of taskList) {
       //领奖
@@ -211,11 +239,11 @@ async function receiveGoldCoin() {
     "shareId": "",
     "channel": "4",
   });
-  $.get(options, (err, resp, data) => {});
-  $.goldCoinData = await smtgReceiveCoin({"type":0});
+  $.get(options, (err, resp, data) => { });
+  $.goldCoinData = await smtgReceiveCoin({ "type": 0 });
   if ($.goldCoinData.data && $.goldCoinData.data.bizCode === 0) {
     console.log(`领取金币成功：${$.goldCoinData.data.result.receivedGold}`);
-    message += `【领取金币】${$.goldCoinData.data.result.receivedGold}个\n`;
+    message += "<font color=\'#778899\' size=2> " + `【领取金币】${$.goldCoinData.data.result.receivedGold}个` + "</font>\n\n";
   } else {
     console.log($.goldCoinData.data && $.goldCoinData.data.bizMsg);
   }
@@ -227,8 +255,8 @@ function smtgHome() {
       "shareId": "",
       "channel": "4",
     });
-    $.get(options, (err, resp, data) => {});
-    $.get(taskUrl("smtg_newHome", {"shopType":"0","channel":"18"}), (err, resp, data) => {
+    $.get(options, (err, resp, data) => { });
+    $.get(taskUrl("smtg_newHome", { "shopType": "0", "channel": "18" }), (err, resp, data) => {
       try {
         if (err) {
           console.log("\n东东超市: API查询请求失败 ‼️‼️");
@@ -263,15 +291,15 @@ async function receiveLimitProductBlueCoin() {
   const res = await smtgReceiveCoin({ "type": 1 });
   console.log(`\n限时商品领蓝币结果：[${res.data.bizMsg}]\n`);
   if (res.data.bizCode === 0) {
-    message += `【限时商品】获得${res.data.result.receivedBlue}个蓝币\n`;
+    message += "<font color=\'#778899\' size=2> " + `【限时商品】获得${res.data.result.receivedBlue}个蓝币` + "</font>\n\n";
   }
 }
 
 //领蓝币
 function receiveBlueCoin(timeout = 0) {
   return new Promise((resolve) => {
-    setTimeout( ()=>{
-      $.get(taskUrl('smtg_receiveCoin', {"type": 4, "shopId": $.currentShopId, "channel": "18"}), async (err, resp, data) => {
+    setTimeout(() => {
+      $.get(taskUrl('smtg_receiveCoin', { "type": 4, "shopId": $.currentShopId, "channel": "18" }), async (err, resp, data) => {
         try {
           if (err) {
             console.log('\n东东超市: API查询请求失败 ‼️‼️')
@@ -282,13 +310,16 @@ function receiveBlueCoin(timeout = 0) {
             if ($.data.data.bizCode !== 0 && $.data.data.bizCode !== 809) {
               $.coinerr = `${$.data.data.bizMsg}`;
               message += `【收取小费】${$.data.data.bizMsg}\n`;
+
+              message += "<font color=\'#778899\' size=2> " + `【收取小费】${$.data.data.bizMsg}` + "</font>\n\n";
               console.log(`收取蓝币失败：${$.data.data.bizMsg}`)
               return
             }
-            if  ($.data.data.bizCode === 0) {
+            if ($.data.data.bizCode === 0) {
               $.coincount += $.data.data.result.receivedBlue;
-              $.blueCionTimes ++;
+              $.blueCionTimes++;
               console.log(`【京东账号${$.index}】${$.nickName} 第${$.blueCionTimes}次领蓝币成功，获得${$.data.data.result.receivedBlue}个\n`)
+              message += "<font color=\'#778899\' size=2> " + `第${$.blueCionTimes}次领蓝币成功，获得${$.data.data.result.receivedBlue}个` + "</font>\n\n";
               if (!$.data.data.result.isNextReceived) {
                 message += `【收取小费】${$.coincount}个\n`;
                 return
@@ -302,26 +333,28 @@ function receiveBlueCoin(timeout = 0) {
           resolve()
         }
       })
-    },timeout)
+    }, timeout)
   })
 }
 async function daySign() {
-  const signDataRes = await smtgSign({"shareId":"QcSH6BqSXysv48bMoRfTBz7VBqc5P6GodDUBAt54d8598XAUtNoGd4xWVuNtVVwNO1dSKcoaY3sX_13Z-b3BoSW1W7NnqD36nZiNuwrtyO-gXbjIlsOBFpgIPMhpiVYKVAaNiHmr2XOJptu14d8uW-UWJtefjG9fUGv0Io7NwAQ","channel":"4"});
-  await smtgSign({"shareId":"TBj0jH-x7iMvCMGsHfc839Tfnco6UarNx1r3wZVIzTZiLdWMRrmoocTbXrUOFn0J6UIir16A2PPxF50_Eoo7PW_NQVOiM-3R16jjlT20TNPHpbHnmqZKUDaRajnseEjVb-SYi6DQqlSOioRc27919zXTEB6_llab2CW2aDok36g","channel":"4"});
+  const signDataRes = await smtgSign({ "shareId": "QcSH6BqSXysv48bMoRfTBz7VBqc5P6GodDUBAt54d8598XAUtNoGd4xWVuNtVVwNO1dSKcoaY3sX_13Z-b3BoSW1W7NnqD36nZiNuwrtyO-gXbjIlsOBFpgIPMhpiVYKVAaNiHmr2XOJptu14d8uW-UWJtefjG9fUGv0Io7NwAQ", "channel": "4" });
+  await smtgSign({ "shareId": "TBj0jH-x7iMvCMGsHfc839Tfnco6UarNx1r3wZVIzTZiLdWMRrmoocTbXrUOFn0J6UIir16A2PPxF50_Eoo7PW_NQVOiM-3R16jjlT20TNPHpbHnmqZKUDaRajnseEjVb-SYi6DQqlSOioRc27919zXTEB6_llab2CW2aDok36g", "channel": "4" });
   if (signDataRes && signDataRes.code === 0) {
     const signList = await smtgSignList();
     if (signList.data.bizCode === 0) {
       $.todayDay = signList.data.result.todayDay;
     }
     if (signDataRes.code === 0 && signDataRes.data.success) {
-      message += `【第${$.todayDay}日签到】成功，奖励${signDataRes.data.result.rewardBlue}蓝币\n`
+      message += "<font color=\'#778899\' size=2> " + `【第${$.todayDay}日签到】成功，奖励${signDataRes.data.result.rewardBlue}蓝币` + "</font>\n\n";
+      // message += `【第${$.todayDay}日签到】成功，奖励${signDataRes.data.result.rewardBlue}蓝币\n`
     } else {
-      message += `【第${$.todayDay}日签到】${signDataRes.data.bizMsg}\n`
+      message += "<font color=\'#778899\' size=2> " + `【第${$.todayDay}日签到】${signDataRes.data.bizMsg}` + "</font>\n\n";
+      // message += `【第${$.todayDay}日签到】${signDataRes.data.bizMsg}\n`
     }
   }
 }
 async function BeanSign() {
-  const beanSignRes = await smtgSign({"channel": "1"});
+  const beanSignRes = await smtgSign({ "channel": "1" });
   if (beanSignRes && beanSignRes.data['bizCode'] === 0) {
     console.log(`每天从指定入口进入游戏,可获得额外奖励:${JSON.stringify(beanSignRes)}`)
   }
@@ -448,7 +481,7 @@ async function businessCircleActivity() {
     console.log(`\n【您的商圈inviteCode互助码】：\n${inviteCode}\n\n`);
     const businessCircleIndexRes = await smtg_businessCircleIndex();
     const { result } = businessCircleIndexRes.data;
-    const { pkPrizeStatus, pkStatus  } = result;
+    const { pkPrizeStatus, pkStatus } = result;
     if (pkPrizeStatus === 2) {
       console.log(`开始领取商圈PK奖励`);
       const getPkPrizeRes = await smtg_getPkPrize();
@@ -560,7 +593,7 @@ async function myProductList() {
       } else if (item.groundStatus === 2 || item.groundStatus === 3) {
         if (item.productInfo.productType === 2) {
           console.log(`[${item.name}][限时商品]`)
-        } else if (item.productInfo.productType === 1){
+        } else if (item.productInfo.productType === 1) {
           console.log(`[${item.name}]`)
         } else {
           console.log(`[${item.name}][productType:${item.productInfo.productType}]`)
@@ -626,7 +659,7 @@ async function upgrade() {
     const shelfCategorys = shelfCategory_1.concat(shelfCategory_2).concat(shelfCategory_3);
     console.log(`\n商品名称       归属货架     目前等级    解锁状态    可升级状态`)
     for (let item of shelfCategorys) {
-      console.log(`  ${item["name"].length<3?item["name"]+`\xa0`:item["name"]}       ${item['shelfCategory'] === 1 ? '普通货架' : item['shelfCategory'] === 2 ? '冰柜货架' : item['shelfCategory'] === 3 ? '水果货架':'未知货架'}       ${item["unlockStatus"] === 0 ? '---' : item["level"]+'级'}     ${item["unlockStatus"] === 0 ? '未解锁' : '已解锁'}      ${item["upgradeStatus"] === 1 ? '可以升级' : item["upgradeStatus"] === 0 ? '不可升级':item["upgradeStatus"]}`)
+      console.log(`  ${item["name"].length < 3 ? item["name"] + `\xa0` : item["name"]}       ${item['shelfCategory'] === 1 ? '普通货架' : item['shelfCategory'] === 2 ? '冰柜货架' : item['shelfCategory'] === 3 ? '水果货架' : '未知货架'}       ${item["unlockStatus"] === 0 ? '---' : item["level"] + '级'}     ${item["unlockStatus"] === 0 ? '未解锁' : '已解锁'}      ${item["upgradeStatus"] === 1 ? '可以升级' : item["upgradeStatus"] === 0 ? '不可升级' : item["upgradeStatus"]}`)
     }
     shelfCategorys.sort(sortSyData);
     for (let item of shelfCategorys) {
@@ -660,6 +693,8 @@ async function upgrade() {
         console.log(` [${item["name"]}]         ${item["level"]}/${item["maxLevel"]}         ${item["upgradeCostGold"]}`);
       }
       console.log(`开始升级[${shelfList_upgrade[0].name}]货架，当前等级${shelfList_upgrade[0].level}，所需金币${shelfList_upgrade[0].upgradeCostGold}\n`);
+      message += "<font color=\'#778899\' size=2> " + `开始升级[${shelfList_upgrade[0].name}]货架，当前等级${shelfList_upgrade[0].level}，所需金币${shelfList_upgrade[0].upgradeCostGold}\n` + "</font>\n\n";
+
       await smtg_upgradeShelf(shelfList_upgrade[0].shelfId);
     }
   }
@@ -734,7 +769,9 @@ async function limitTimeProduct() {
             const groundRes = await smtg_ground(item2['productId'], shelfList2.slice(-1)[0]);
             if (groundRes.data.bizCode === 0) {
               console.log(`限时商品上架成功`);
-              message += `【限时商品】上架成功\n`;
+              message += "<font color=\'#778899\' size=2> " + `【限时商品】上架成功\n` + "</font>\n\n";
+
+              // message += `【限时商品】上架成功`;
             }
           }
         }
@@ -756,10 +793,14 @@ async function receiveUserUpgradeBlue() {
       }
     }
     $.log(`店铺升级奖励获取:${$.receiveUserUpgradeBlue}蓝币\n`)
+    message += "<font color=\'#778899\' size=2> " + `店铺升级奖励获取:${$.receiveUserUpgradeBlue}蓝币\n` + "</font>\n\n";
+
   }
-  const res = await smtgReceiveCoin({"type": 4, "channel": "18"})
+  const res = await smtgReceiveCoin({ "type": 4, "channel": "18" })
   // $.log(`${JSON.stringify(res)}\n`)
   if (res && res.data['bizCode'] === 0) {
+    message += "<font color=\'#778899\' size=2> " + `收取营业额：获得 ${res.data.result['receivedTurnover']}` + "</font>\n\n";
+
     console.log(`\n收取营业额：获得 ${res.data.result['receivedTurnover']}\n`);
   }
 }
@@ -769,7 +810,9 @@ async function Home() {
     const { result } = homeRes.data;
     const { shopName, totalBlue } = result;
     subTitle = shopName;
-    message += `【总蓝币】${totalBlue}个\n`;
+    // message += `【总蓝币】${totalBlue}个\n`;
+    message += "<font color=\'#778899\' size=2> " + `【总蓝币】${totalBlue}个` + "</font>\n\n";
+
   }
 }
 //=============================================脚本使用到的京东API=====================================
@@ -789,6 +832,8 @@ function smtg_shopIndex() {
           if (data && data.data['bizCode'] === 0) {
             const { shopId, shelfList, merchandiseList, level } = data.data['result'];
             message += `【店铺等级】${level}\n`;
+            message += "<font color=\'#778899\' size=2> " + `【店铺等级】${level}` + "</font>\n\n";
+
             if (shelfList && shelfList.length > 0) {
               for (let item of shelfList) {
                 //status: 2可解锁,1可升级,-1不可解锁
@@ -811,9 +856,9 @@ function smtg_shopIndex() {
               $.log(`\n限时商品${data.data['result']['forSaleMerchandise']['name']}已上架`)
             } else {
               if (merchandiseList && merchandiseList.length > 0) {
-                for (let  item of merchandiseList) {
+                for (let item of merchandiseList) {
                   console.log(`发现限时商品${item.name}\n`);
-                  await smtg_sellMerchandise({"shopId": shopId,"merchandiseId": item['id'],"channel":"18"})
+                  await smtg_sellMerchandise({ "shopId": shopId, "merchandiseId": item['id'], "channel": "18" })
                 }
               }
             }
@@ -889,7 +934,7 @@ function smtg_sellMerchandise(body) {
 //新版东东超市
 function updatePkActivityId(url = 'https://raw.githubusercontent.com/xxx/updateTeam/master/jd_updateTeam.json') {
   return new Promise(resolve => {
-    $.get({url}, async (err, resp, data) => {
+    $.get({ url }, async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -1013,7 +1058,7 @@ function smtgSignList() {
 }
 //查询商圈任务列表
 function smtgQueryPkTask() {
-  return new Promise( (resolve) => {
+  return new Promise((resolve) => {
     $.get(taskUrl('smtg_queryPkTask'), async (err, resp, data) => {
       try {
         if (err) {
@@ -1058,7 +1103,7 @@ function smtgQueryPkTask() {
 //PK邀请好友
 function smtgDoAssistPkTask(code) {
   return new Promise((resolve) => {
-    $.get(taskUrl('smtg_doAssistPkTask', {"inviteCode": code}), (err, resp, data) => {
+    $.get(taskUrl('smtg_doAssistPkTask', { "inviteCode": code }), (err, resp, data) => {
       try {
         if (err) {
           console.log('\n东东超市: API查询请求失败 ‼️‼️')
@@ -1096,7 +1141,7 @@ function smtgReceiveCoin(body) {
 //领取PK任务做完后的奖励
 function smtgObtainPkTaskPrize(taskId) {
   return new Promise((resolve) => {
-    $.get(taskUrl('smtg_obtainPkTaskPrize', {"taskId": taskId}), (err, resp, data) => {
+    $.get(taskUrl('smtg_obtainPkTaskPrize', { "taskId": taskId }), (err, resp, data) => {
       try {
         if (err) {
           console.log('\n东东超市: API查询请求失败 ‼️‼️')
@@ -1114,7 +1159,7 @@ function smtgObtainPkTaskPrize(taskId) {
 }
 function smtgDoPkTask(taskId, itemId) {
   return new Promise((resolve) => {
-    $.get(taskUrl('smtg_doPkTask', {"taskId": taskId, "itemId": itemId}), (err, resp, data) => {
+    $.get(taskUrl('smtg_doPkTask', { "taskId": taskId, "itemId": itemId }), (err, resp, data) => {
       try {
         if (err) {
           console.log('\n东东超市: API查询请求失败 ‼️‼️')
@@ -1241,7 +1286,7 @@ function smtg_businessCircleIndex() {
 }
 function smtg_receivedPkTeamPrize() {
   return new Promise((resolve) => {
-    $.get(taskUrl('smtg_receivedPkTeamPrize', {"channel": "1"}), (err, resp, data) => {
+    $.get(taskUrl('smtg_receivedPkTeamPrize', { "channel": "1" }), (err, resp, data) => {
       try {
         if (err) {
           console.log('\n东东超市: API查询请求失败 ‼️‼️')
@@ -1457,7 +1502,7 @@ function smtg_productList() {
 }
 function smtg_lotteryIndex() {
   return new Promise((resolve) => {
-    $.get(taskUrl('smtg_lotteryIndex', {"costType":1,"channel":1}), (err, resp, data) => {
+    $.get(taskUrl('smtg_lotteryIndex', { "costType": 1, "channel": 1 }), (err, resp, data) => {
       try {
         if (err) {
           console.log('\n东东超市: API查询请求失败 ‼️‼️')
@@ -1476,7 +1521,7 @@ function smtg_lotteryIndex() {
 function smtg_drawLottery() {
   return new Promise(async (resolve) => {
     await $.wait(1000);
-    $.get(taskUrl('smtg_drawLottery', {"costType":1,"channel":1}), (err, resp, data) => {
+    $.get(taskUrl('smtg_drawLottery', { "costType": 1, "channel": 1 }), (err, resp, data) => {
       try {
         if (err) {
           console.log('\n东东超市: API查询请求失败 ‼️‼️')
@@ -1526,7 +1571,7 @@ function requireConfig() {
           cookiesArr.push(jdCookieNode[item])
         }
       })
-      if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
+      if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => { };
     } else {
       cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
     }
@@ -1581,7 +1626,7 @@ function TotalBean() {
 function getTeam() {
   return new Promise(async resolve => {
     $.getTeams = [];
-    $.get({url: `http://jd.turinglabs.net/api/v2/jd/supermarket/read/100000/`, timeout: 100000}, (err, resp, data) => {
+    $.get({ url: `http://jd.turinglabs.net/api/v2/jd/supermarket/read/100000/`, timeout: 100000 }, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -1643,7 +1688,7 @@ async function helpAuthor() {
 async function barGain() {
   let res = await getAuthorShareCode2('')
   if (!res) {
-    $.http.get({url: ''}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+    $.http.get({ url: '' }).then((resp) => { }).catch((e) => $.log('刷新CDN异常', e));
     await $.wait(1000)
     res = await getAuthorShareCode2('')
   }
@@ -1667,14 +1712,14 @@ async function barGain() {
       },
       body: `functionId=cutPriceByUser&body={"activityId": ${item['activityId']},"userName":"","followShop":1,"shopId": ${item['shopId']},"userPic":""}&client=wh5&clientVersion=1.0.0`
     };
-    await $.post(options, (err, ersp, data) => {})
+    await $.post(options, (err, ersp, data) => { })
   }
 }
 
 async function bigWinner() {
   let res = await getAuthorShareCode2('')
   if (!res) {
-    $.http.get({url: ''}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+    $.http.get({ url: '' }).then((resp) => { }).catch((e) => $.log('刷新CDN异常', e));
     await $.wait(1000)
     res = await getAuthorShareCode2('')
   }
@@ -1682,7 +1727,7 @@ async function bigWinner() {
   for (let vo of $.codeList) {
     if (!vo['inviter']) continue
     await _618(vo['redEnvelopeId'], vo['inviter'], '1');
-    await _618(vo['redEnvelopeId'],vo['inviter'], '2')
+    await _618(vo['redEnvelopeId'], vo['inviter'], '2')
   }
 }
 
@@ -1750,4 +1795,53 @@ function getRandomArrayElements(arr, count) {
   return shuffled.slice(min);
 }
 // prettier-ignore
-function Env(t,e){"undefined"!=typeof process&&JSON.stringify(process.env).indexOf("GITHUB")>-1&&process.exit(0);class s{constructor(t){this.env=t}send(t,e="GET"){t="string"==typeof t?{url:t}:t;let s=this.get;return"POST"===e&&(s=this.post),new Promise((e,i)=>{s.call(this,t,(t,s,r)=>{t?i(t):e(s)})})}get(t){return this.send.call(this.env,t)}post(t){return this.send.call(this.env,t,"POST")}}return new class{constructor(t,e){this.name=t,this.http=new s(this),this.data=null,this.dataFile="box.dat",this.logs=[],this.isMute=!1,this.isNeedRewrite=!1,this.logSeparator="\n",this.startTime=(new Date).getTime(),Object.assign(this,e),this.log("",`🔔${this.name}, 开始!`)}isNode(){return"undefined"!=typeof module&&!!module.exports}isQuanX(){return"undefined"!=typeof $task}isSurge(){return"undefined"!=typeof $httpClient&&"undefined"==typeof $loon}isLoon(){return"undefined"!=typeof $loon}toObj(t,e=null){try{return JSON.parse(t)}catch{return e}}toStr(t,e=null){try{return JSON.stringify(t)}catch{return e}}getjson(t,e){let s=e;const i=this.getdata(t);if(i)try{s=JSON.parse(this.getdata(t))}catch{}return s}setjson(t,e){try{return this.setdata(JSON.stringify(t),e)}catch{return!1}}getScript(t){return new Promise(e=>{this.get({url:t},(t,s,i)=>e(i))})}runScript(t,e){return new Promise(s=>{let i=this.getdata("@chavy_boxjs_userCfgs.httpapi");i=i?i.replace(/\n/g,"").trim():i;let r=this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");r=r?1*r:20,r=e&&e.timeout?e.timeout:r;const[o,h]=i.split("@"),n={url:`http://${h}/v1/scripting/evaluate`,body:{script_text:t,mock_type:"cron",timeout:r},headers:{"X-Key":o,Accept:"*/*"}};this.post(n,(t,e,i)=>s(i))}).catch(t=>this.logErr(t))}loaddata(){if(!this.isNode())return{};{this.fs=this.fs?this.fs:require("fs"),this.path=this.path?this.path:require("path");const t=this.path.resolve(this.dataFile),e=this.path.resolve(process.cwd(),this.dataFile),s=this.fs.existsSync(t),i=!s&&this.fs.existsSync(e);if(!s&&!i)return{};{const i=s?t:e;try{return JSON.parse(this.fs.readFileSync(i))}catch(t){return{}}}}}writedata(){if(this.isNode()){this.fs=this.fs?this.fs:require("fs"),this.path=this.path?this.path:require("path");const t=this.path.resolve(this.dataFile),e=this.path.resolve(process.cwd(),this.dataFile),s=this.fs.existsSync(t),i=!s&&this.fs.existsSync(e),r=JSON.stringify(this.data);s?this.fs.writeFileSync(t,r):i?this.fs.writeFileSync(e,r):this.fs.writeFileSync(t,r)}}lodash_get(t,e,s){const i=e.replace(/\[(\d+)\]/g,".$1").split(".");let r=t;for(const t of i)if(r=Object(r)[t],void 0===r)return s;return r}lodash_set(t,e,s){return Object(t)!==t?t:(Array.isArray(e)||(e=e.toString().match(/[^.[\]]+/g)||[]),e.slice(0,-1).reduce((t,s,i)=>Object(t[s])===t[s]?t[s]:t[s]=Math.abs(e[i+1])>>0==+e[i+1]?[]:{},t)[e[e.length-1]]=s,t)}getdata(t){let e=this.getval(t);if(/^@/.test(t)){const[,s,i]=/^@(.*?)\.(.*?)$/.exec(t),r=s?this.getval(s):"";if(r)try{const t=JSON.parse(r);e=t?this.lodash_get(t,i,""):e}catch(t){e=""}}return e}setdata(t,e){let s=!1;if(/^@/.test(e)){const[,i,r]=/^@(.*?)\.(.*?)$/.exec(e),o=this.getval(i),h=i?"null"===o?null:o||"{}":"{}";try{const e=JSON.parse(h);this.lodash_set(e,r,t),s=this.setval(JSON.stringify(e),i)}catch(e){const o={};this.lodash_set(o,r,t),s=this.setval(JSON.stringify(o),i)}}else s=this.setval(t,e);return s}getval(t){return this.isSurge()||this.isLoon()?$persistentStore.read(t):this.isQuanX()?$prefs.valueForKey(t):this.isNode()?(this.data=this.loaddata(),this.data[t]):this.data&&this.data[t]||null}setval(t,e){return this.isSurge()||this.isLoon()?$persistentStore.write(t,e):this.isQuanX()?$prefs.setValueForKey(t,e):this.isNode()?(this.data=this.loaddata(),this.data[e]=t,this.writedata(),!0):this.data&&this.data[e]||null}initGotEnv(t){this.got=this.got?this.got:require("got"),this.cktough=this.cktough?this.cktough:require("tough-cookie"),this.ckjar=this.ckjar?this.ckjar:new this.cktough.CookieJar,t&&(t.headers=t.headers?t.headers:{},void 0===t.headers.Cookie&&void 0===t.cookieJar&&(t.cookieJar=this.ckjar))}get(t,e=(()=>{})){t.headers&&(delete t.headers["Content-Type"],delete t.headers["Content-Length"]),this.isSurge()||this.isLoon()?(this.isSurge()&&this.isNeedRewrite&&(t.headers=t.headers||{},Object.assign(t.headers,{"X-Surge-Skip-Scripting":!1})),$httpClient.get(t,(t,s,i)=>{!t&&s&&(s.body=i,s.statusCode=s.status),e(t,s,i)})):this.isQuanX()?(this.isNeedRewrite&&(t.opts=t.opts||{},Object.assign(t.opts,{hints:!1})),$task.fetch(t).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>e(t))):this.isNode()&&(this.initGotEnv(t),this.got(t).on("redirect",(t,e)=>{try{if(t.headers["set-cookie"]){const s=t.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();s&&this.ckjar.setCookieSync(s,null),e.cookieJar=this.ckjar}}catch(t){this.logErr(t)}}).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>{const{message:s,response:i}=t;e(s,i,i&&i.body)}))}post(t,e=(()=>{})){if(t.body&&t.headers&&!t.headers["Content-Type"]&&(t.headers["Content-Type"]="application/x-www-form-urlencoded"),t.headers&&delete t.headers["Content-Length"],this.isSurge()||this.isLoon())this.isSurge()&&this.isNeedRewrite&&(t.headers=t.headers||{},Object.assign(t.headers,{"X-Surge-Skip-Scripting":!1})),$httpClient.post(t,(t,s,i)=>{!t&&s&&(s.body=i,s.statusCode=s.status),e(t,s,i)});else if(this.isQuanX())t.method="POST",this.isNeedRewrite&&(t.opts=t.opts||{},Object.assign(t.opts,{hints:!1})),$task.fetch(t).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>e(t));else if(this.isNode()){this.initGotEnv(t);const{url:s,...i}=t;this.got.post(s,i).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>{const{message:s,response:i}=t;e(s,i,i&&i.body)})}}time(t,e=null){const s=e?new Date(e):new Date;let i={"M+":s.getMonth()+1,"d+":s.getDate(),"H+":s.getHours(),"m+":s.getMinutes(),"s+":s.getSeconds(),"q+":Math.floor((s.getMonth()+3)/3),S:s.getMilliseconds()};/(y+)/.test(t)&&(t=t.replace(RegExp.$1,(s.getFullYear()+"").substr(4-RegExp.$1.length)));for(let e in i)new RegExp("("+e+")").test(t)&&(t=t.replace(RegExp.$1,1==RegExp.$1.length?i[e]:("00"+i[e]).substr((""+i[e]).length)));return t}msg(e=t,s="",i="",r){const o=t=>{if(!t)return t;if("string"==typeof t)return this.isLoon()?t:this.isQuanX()?{"open-url":t}:this.isSurge()?{url:t}:void 0;if("object"==typeof t){if(this.isLoon()){let e=t.openUrl||t.url||t["open-url"],s=t.mediaUrl||t["media-url"];return{openUrl:e,mediaUrl:s}}if(this.isQuanX()){let e=t["open-url"]||t.url||t.openUrl,s=t["media-url"]||t.mediaUrl;return{"open-url":e,"media-url":s}}if(this.isSurge()){let e=t.url||t.openUrl||t["open-url"];return{url:e}}}};if(this.isMute||(this.isSurge()||this.isLoon()?$notification.post(e,s,i,o(r)):this.isQuanX()&&$notify(e,s,i,o(r))),!this.isMuteLog){let t=["","==============📣系统通知📣=============="];t.push(e),s&&t.push(s),i&&t.push(i),console.log(t.join("\n")),this.logs=this.logs.concat(t)}}log(...t){t.length>0&&(this.logs=[...this.logs,...t]),console.log(t.join(this.logSeparator))}logErr(t,e){const s=!this.isSurge()&&!this.isQuanX()&&!this.isLoon();s?this.log("",`❗️${this.name}, 错误!`,t.stack):this.log("",`❗️${this.name}, 错误!`,t)}wait(t){return new Promise(e=>setTimeout(e,t))}done(t={}){const e=(new Date).getTime(),s=(e-this.startTime)/1e3;this.log("",`🔔${this.name}, 结束! 🕛 ${s} 秒`),this.log(),(this.isSurge()||this.isQuanX()||this.isLoon())&&$done(t)}}(t,e)}
+function Env(t, e) { "undefined" != typeof process && JSON.stringify(process.env).indexOf("GITHUB") > -1 && process.exit(0); class s { constructor(t) { this.env = t } send(t, e = "GET") { t = "string" == typeof t ? { url: t } : t; let s = this.get; return "POST" === e && (s = this.post), new Promise((e, i) => { s.call(this, t, (t, s, r) => { t ? i(t) : e(s) }) }) } get(t) { return this.send.call(this.env, t) } post(t) { return this.send.call(this.env, t, "POST") } } return new class { constructor(t, e) { this.name = t, this.http = new s(this), this.data = null, this.dataFile = "box.dat", this.logs = [], this.isMute = !1, this.isNeedRewrite = !1, this.logSeparator = "\n", this.startTime = (new Date).getTime(), Object.assign(this, e), this.log("", `🔔${this.name}, 开始!`) } isNode() { return "undefined" != typeof module && !!module.exports } isQuanX() { return "undefined" != typeof $task } isSurge() { return "undefined" != typeof $httpClient && "undefined" == typeof $loon } isLoon() { return "undefined" != typeof $loon } toObj(t, e = null) { try { return JSON.parse(t) } catch { return e } } toStr(t, e = null) { try { return JSON.stringify(t) } catch { return e } } getjson(t, e) { let s = e; const i = this.getdata(t); if (i) try { s = JSON.parse(this.getdata(t)) } catch { } return s } setjson(t, e) { try { return this.setdata(JSON.stringify(t), e) } catch { return !1 } } getScript(t) { return new Promise(e => { this.get({ url: t }, (t, s, i) => e(i)) }) } runScript(t, e) { return new Promise(s => { let i = this.getdata("@chavy_boxjs_userCfgs.httpapi"); i = i ? i.replace(/\n/g, "").trim() : i; let r = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout"); r = r ? 1 * r : 20, r = e && e.timeout ? e.timeout : r; const [o, h] = i.split("@"), n = { url: `http://${h}/v1/scripting/evaluate`, body: { script_text: t, mock_type: "cron", timeout: r }, headers: { "X-Key": o, Accept: "*/*" } }; this.post(n, (t, e, i) => s(i)) }).catch(t => this.logErr(t)) } loaddata() { if (!this.isNode()) return {}; { this.fs = this.fs ? this.fs : require("fs"), this.path = this.path ? this.path : require("path"); const t = this.path.resolve(this.dataFile), e = this.path.resolve(process.cwd(), this.dataFile), s = this.fs.existsSync(t), i = !s && this.fs.existsSync(e); if (!s && !i) return {}; { const i = s ? t : e; try { return JSON.parse(this.fs.readFileSync(i)) } catch (t) { return {} } } } } writedata() { if (this.isNode()) { this.fs = this.fs ? this.fs : require("fs"), this.path = this.path ? this.path : require("path"); const t = this.path.resolve(this.dataFile), e = this.path.resolve(process.cwd(), this.dataFile), s = this.fs.existsSync(t), i = !s && this.fs.existsSync(e), r = JSON.stringify(this.data); s ? this.fs.writeFileSync(t, r) : i ? this.fs.writeFileSync(e, r) : this.fs.writeFileSync(t, r) } } lodash_get(t, e, s) { const i = e.replace(/\[(\d+)\]/g, ".$1").split("."); let r = t; for (const t of i) if (r = Object(r)[t], void 0 === r) return s; return r } lodash_set(t, e, s) { return Object(t) !== t ? t : (Array.isArray(e) || (e = e.toString().match(/[^.[\]]+/g) || []), e.slice(0, -1).reduce((t, s, i) => Object(t[s]) === t[s] ? t[s] : t[s] = Math.abs(e[i + 1]) >> 0 == +e[i + 1] ? [] : {}, t)[e[e.length - 1]] = s, t) } getdata(t) { let e = this.getval(t); if (/^@/.test(t)) { const [, s, i] = /^@(.*?)\.(.*?)$/.exec(t), r = s ? this.getval(s) : ""; if (r) try { const t = JSON.parse(r); e = t ? this.lodash_get(t, i, "") : e } catch (t) { e = "" } } return e } setdata(t, e) { let s = !1; if (/^@/.test(e)) { const [, i, r] = /^@(.*?)\.(.*?)$/.exec(e), o = this.getval(i), h = i ? "null" === o ? null : o || "{}" : "{}"; try { const e = JSON.parse(h); this.lodash_set(e, r, t), s = this.setval(JSON.stringify(e), i) } catch (e) { const o = {}; this.lodash_set(o, r, t), s = this.setval(JSON.stringify(o), i) } } else s = this.setval(t, e); return s } getval(t) { return this.isSurge() || this.isLoon() ? $persistentStore.read(t) : this.isQuanX() ? $prefs.valueForKey(t) : this.isNode() ? (this.data = this.loaddata(), this.data[t]) : this.data && this.data[t] || null } setval(t, e) { return this.isSurge() || this.isLoon() ? $persistentStore.write(t, e) : this.isQuanX() ? $prefs.setValueForKey(t, e) : this.isNode() ? (this.data = this.loaddata(), this.data[e] = t, this.writedata(), !0) : this.data && this.data[e] || null } initGotEnv(t) { this.got = this.got ? this.got : require("got"), this.cktough = this.cktough ? this.cktough : require("tough-cookie"), this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar, t && (t.headers = t.headers ? t.headers : {}, void 0 === t.headers.Cookie && void 0 === t.cookieJar && (t.cookieJar = this.ckjar)) } get(t, e = (() => { })) { t.headers && (delete t.headers["Content-Type"], delete t.headers["Content-Length"]), this.isSurge() || this.isLoon() ? (this.isSurge() && this.isNeedRewrite && (t.headers = t.headers || {}, Object.assign(t.headers, { "X-Surge-Skip-Scripting": !1 })), $httpClient.get(t, (t, s, i) => { !t && s && (s.body = i, s.statusCode = s.status), e(t, s, i) })) : this.isQuanX() ? (this.isNeedRewrite && (t.opts = t.opts || {}, Object.assign(t.opts, { hints: !1 })), $task.fetch(t).then(t => { const { statusCode: s, statusCode: i, headers: r, body: o } = t; e(null, { status: s, statusCode: i, headers: r, body: o }, o) }, t => e(t))) : this.isNode() && (this.initGotEnv(t), this.got(t).on("redirect", (t, e) => { try { if (t.headers["set-cookie"]) { const s = t.headers["set-cookie"].map(this.cktough.Cookie.parse).toString(); s && this.ckjar.setCookieSync(s, null), e.cookieJar = this.ckjar } } catch (t) { this.logErr(t) } }).then(t => { const { statusCode: s, statusCode: i, headers: r, body: o } = t; e(null, { status: s, statusCode: i, headers: r, body: o }, o) }, t => { const { message: s, response: i } = t; e(s, i, i && i.body) })) } post(t, e = (() => { })) { if (t.body && t.headers && !t.headers["Content-Type"] && (t.headers["Content-Type"] = "application/x-www-form-urlencoded"), t.headers && delete t.headers["Content-Length"], this.isSurge() || this.isLoon()) this.isSurge() && this.isNeedRewrite && (t.headers = t.headers || {}, Object.assign(t.headers, { "X-Surge-Skip-Scripting": !1 })), $httpClient.post(t, (t, s, i) => { !t && s && (s.body = i, s.statusCode = s.status), e(t, s, i) }); else if (this.isQuanX()) t.method = "POST", this.isNeedRewrite && (t.opts = t.opts || {}, Object.assign(t.opts, { hints: !1 })), $task.fetch(t).then(t => { const { statusCode: s, statusCode: i, headers: r, body: o } = t; e(null, { status: s, statusCode: i, headers: r, body: o }, o) }, t => e(t)); else if (this.isNode()) { this.initGotEnv(t); const { url: s, ...i } = t; this.got.post(s, i).then(t => { const { statusCode: s, statusCode: i, headers: r, body: o } = t; e(null, { status: s, statusCode: i, headers: r, body: o }, o) }, t => { const { message: s, response: i } = t; e(s, i, i && i.body) }) } } time(t, e = null) { const s = e ? new Date(e) : new Date; let i = { "M+": s.getMonth() + 1, "d+": s.getDate(), "H+": s.getHours(), "m+": s.getMinutes(), "s+": s.getSeconds(), "q+": Math.floor((s.getMonth() + 3) / 3), S: s.getMilliseconds() }; /(y+)/.test(t) && (t = t.replace(RegExp.$1, (s.getFullYear() + "").substr(4 - RegExp.$1.length))); for (let e in i) new RegExp("(" + e + ")").test(t) && (t = t.replace(RegExp.$1, 1 == RegExp.$1.length ? i[e] : ("00" + i[e]).substr(("" + i[e]).length))); return t } msg(e = t, s = "", i = "", r) { const o = t => { if (!t) return t; if ("string" == typeof t) return this.isLoon() ? t : this.isQuanX() ? { "open-url": t } : this.isSurge() ? { url: t } : void 0; if ("object" == typeof t) { if (this.isLoon()) { let e = t.openUrl || t.url || t["open-url"], s = t.mediaUrl || t["media-url"]; return { openUrl: e, mediaUrl: s } } if (this.isQuanX()) { let e = t["open-url"] || t.url || t.openUrl, s = t["media-url"] || t.mediaUrl; return { "open-url": e, "media-url": s } } if (this.isSurge()) { let e = t.url || t.openUrl || t["open-url"]; return { url: e } } } }; if (this.isMute || (this.isSurge() || this.isLoon() ? $notification.post(e, s, i, o(r)) : this.isQuanX() && $notify(e, s, i, o(r))), !this.isMuteLog) { let t = ["", "==============📣系统通知📣=============="]; t.push(e), s && t.push(s), i && t.push(i), console.log(t.join("\n")), this.logs = this.logs.concat(t) } } log(...t) { t.length > 0 && (this.logs = [...this.logs, ...t]), console.log(t.join(this.logSeparator)) } logErr(t, e) { const s = !this.isSurge() && !this.isQuanX() && !this.isLoon(); s ? this.log("", `❗️${this.name}, 错误!`, t.stack) : this.log("", `❗️${this.name}, 错误!`, t) } wait(t) { return new Promise(e => setTimeout(e, t)) } done(t = {}) { const e = (new Date).getTime(), s = (e - this.startTime) / 1e3; this.log("", `🔔${this.name}, 结束! 🕛 ${s} 秒`), this.log(), (this.isSurge() || this.isQuanX() || this.isLoon()) && $done(t) } }(t, e) }
+
+
+//我加的函数
+function postToDingTalk(messgae) {
+  const message1 = "" + messgae
+  that.log(messgae)
+
+  const body = {
+    "msgtype": "markdown",
+    "markdown": {
+      "title": "超市",
+      "text": message1
+    },
+    "at": {
+      "atMobiles": [],
+      "isAtAll": false
+    }
+  }
+
+
+  $.post(toDingtalk(dingtalk, JSON.stringify(body)), (data, status, xhr) => {
+    try {
+      that.log(resp)
+      that.log(data)
+      if (err) {
+        that.log(JSON.stringify(err));
+        $.logErr(err);
+      } else {
+        if (safeGet(data)) {
+          $.duckRes = JSON.parse(data);
+        }
+      }
+    } catch (e) {
+      $.logErr(e, resp)
+    } finally {
+      resolve();
+    }
+  }, "json")
+}
+
+
+function toDingtalk(urlmain, bodyMain) {
+  return {
+    url: urlmain,
+    body: bodyMain,
+    headers: { 'Content-Type': 'application/json;charset=utf-8' },
+    timeout: 10000,
+  }
+}
