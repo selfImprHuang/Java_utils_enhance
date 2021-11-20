@@ -20,7 +20,6 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], isLoginInfo = {};
-let openTuanList = [];
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
@@ -57,10 +56,9 @@ if ($.isNode()) {
     console.log(`获取活动ID失败`);
     return;
   }
-
   let openCount = Math.floor((Number(cookiesArr.length)-1)/Number($.completeNumbers));
   console.log(`\n共有${cookiesArr.length}个账号，前${openCount}个账号可以开团\n`);
-
+  $.openTuanList = [];
   console.log(`前${openCount}个账号开始开团\n`);
   for (let i = 0; i < cookiesArr.length && i < openCount; i++) {
     $.cookie = cookiesArr[i];
@@ -80,12 +78,10 @@ if ($.isNode()) {
     if (!isLoginInfo[$.UserName]) continue
     await openTuan();
   }
-  console.log('\n开团信息\n'+JSON.stringify(openTuanList));
+  console.log('\n开团信息\n'+JSON.stringify($.openTuanList));
   console.log(`\n开始互助\n`);
-  let ckList = []
-  ckList = getRandomArrayElements(cookiesArr,cookiesArr.length);
-
-  for (let i = 0; i < ckList.length && openTuanList.length > 0; i++) {
+  let ckList = getRandomArrayElements(cookiesArr,cookiesArr.length);
+  for (let i = 0; i < ckList.length && $.openTuanList.length > 0; i++) {
     $.cookie = ckList[i];
     $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
     $.index = i + 1;
@@ -176,9 +172,9 @@ async function getActivityInfo(){
 async function myReward(){
   return new Promise(async (resolve) => {
     let lkt = new Date().getTime()
-    let lks = $.md5('' + 'JL1VTNRadM68cIMQ' + lkt).toString()
+    let lks = $.md5('' + 'q8DNJdpcfRQ69gIx' + lkt).toString()
     let options = {
-      "url": `https://sendbeans.jd.com/common/api/bean/activity/myReward?itemsPerPage=10&currentPage=1&sendType=0&invokeKey=JL1VTNRadM68cIMQ`,
+      "url": `https://sendbeans.jd.com/common/api/bean/activity/myReward?itemsPerPage=10&currentPage=1&sendType=0&invokeKey=q8DNJdpcfRQ69gIx`,
       "headers": {
         "Host": "sendbeans.jd.com",
         "Origin": "https://sendbeans.jd.com",
@@ -225,9 +221,9 @@ async function myReward(){
 async function getActivityList(){
   return new Promise((resolve) => {
     let lkt = new Date().getTime()
-    let lks = $.md5('' + 'JL1VTNRadM68cIMQ' + lkt).toString()
+    let lks = $.md5('' + 'q8DNJdpcfRQ69gIx' + lkt).toString()
     let options = {
-      "url": `https://sendbeans.jd.com/common/api/bean/activity/get/entry/list/by/channel?channelId=14&channelType=H5&sendType=0&singleActivity=false&invokeKey=JL1VTNRadM68cIMQ`,
+      "url": `https://sendbeans.jd.com/common/api/bean/activity/get/entry/list/by/channel?channelId=14&channelType=H5&sendType=0&singleActivity=false&invokeKey=q8DNJdpcfRQ69gIx`,
       "headers": {
         "Host": "sendbeans.jd.com",
         "Origin": "https://sendbeans.jd.com",
@@ -284,7 +280,7 @@ async function openTuan(){
   }else{
     console.log(`【京东账号${$.index}】${$.UserName} 瓜分ID:${$.rewardRecordId}`);
   }
-  openTuanList.push({
+  $.openTuanList.push({
     'user':$.UserName,
     'rewardRecordId':$.rewardRecordId,
     'completed':$.detail.completed,
@@ -294,8 +290,8 @@ async function openTuan(){
 
 async function helpMain(){
   $.canHelp = true;
-  for (let j = 0; j < openTuanList.length && $.canHelp; j++) {
-    $.oneTuanInfo =  openTuanList[j];
+  for (let j = 0; j < $.openTuanList.length && $.canHelp; j++) {
+    $.oneTuanInfo =  $.openTuanList[j];
     if( $.UserName === $.oneTuanInfo['user']){
       continue;
     }
@@ -343,9 +339,9 @@ async function rewardMain(){
 async function rewardBean(){
   return new Promise((resolve) => {
     let lkt = new Date().getTime()
-    let lks = $.md5('' + 'JL1VTNRadM68cIMQ' + lkt).toString()
+    let lks = $.md5('' + 'q8DNJdpcfRQ69gIx' + lkt).toString()
     let options = {
-      "url": `https://draw.jdfcloud.com/common/api/bean/activity/sendBean?rewardRecordId=${$.rewardRecordId}&jdChannelId=&userSource=mp&appId=wxccb5c536b0ecd1bf&invokeKey=JL1VTNRadM68cIMQ`,
+      "url": `https://draw.jdfcloud.com/common/api/bean/activity/sendBean?rewardRecordId=${$.rewardRecordId}&jdChannelId=&userSource=mp&appId=wxccb5c536b0ecd1bf&invokeKey=q8DNJdpcfRQ69gIx`,
       "headers":  {
         'content-type' : `application/json`,
         'Connection' : `keep-alive`,
@@ -392,9 +388,9 @@ function getRandomArrayElements(arr, count) {
 async function help() {
   await new Promise((resolve) => {
     let lkt = new Date().getTime()
-    let lks = $.md5('' + 'JL1VTNRadM68cIMQ' + lkt + $.activityCode).toString()
+    let lks = $.md5('' + 'q8DNJdpcfRQ69gIx' + lkt + $.activityCode).toString()
     let options = {
-      "url": `https://draw.jdfcloud.com/common/api/bean/activity/participate?activityCode=${$.activityCode}&activityId=${$.activityId}&inviteUserPin=${encodeURIComponent($.oneTuanInfo['user'])}&invokeKey=JL1VTNRadM68cIMQ&timestap=${Date.now()}`,
+      "url": `https://draw.jdfcloud.com/common/api/bean/activity/participate?activityCode=${$.activityCode}&activityId=${$.activityId}&inviteUserPin=${encodeURIComponent($.oneTuanInfo['user'])}&invokeKey=q8DNJdpcfRQ69gIx&timestap=${Date.now()}`,
       "headers":  {
         'content-type' : `application/json`,
         'Connection' : `keep-alive`,
@@ -432,8 +428,8 @@ async function help() {
 
 async function invite() {
   let lkt = new Date().getTime()
-  let lks = $.md5('' + 'JL1VTNRadM68cIMQ' + lkt + $.activityCode).toString()
-  const url = `https://draw.jdfcloud.com/common/api/bean/activity/invite?activityCode=${$.activityCode}&openId=&activityId=${$.activityId}&userSource=mp&formId=123&jdChannelId=&fp=&appId=wxccb5c536b0ecd1bf&invokeKey=JL1VTNRadM68cIMQ`;
+  let lks = $.md5('' + 'q8DNJdpcfRQ69gIx' + lkt + $.activityCode).toString()
+  const url = `https://draw.jdfcloud.com/common/api/bean/activity/invite?activityCode=${$.activityCode}&openId=&activityId=${$.activityId}&userSource=mp&formId=123&jdChannelId=&fp=&appId=wxccb5c536b0ecd1bf&invokeKey=q8DNJdpcfRQ69gIx`;
   const method = `POST`;
   const headers = {
     'content-type' : `application/json`,
@@ -477,8 +473,8 @@ async function invite() {
 
 async function getActivityDetail() {
   let lkt = new Date().getTime()
-  let lks = $.md5('' + 'JL1VTNRadM68cIMQ' + lkt + $.activityCode).toString()
-  const url = `https://draw.jdfcloud.com/common/api/bean/activity/detail?activityCode=${$.activityCode}&activityId=${$.activityId}&userOpenId=&timestap=${Date.now()}&userSource=mp&jdChannelId=&appId=wxccb5c536b0ecd1bf&invokeKey=JL1VTNRadM68cIMQ`;
+  let lks = $.md5('' + 'q8DNJdpcfRQ69gIx' + lkt + $.activityCode).toString()
+  const url = `https://draw.jdfcloud.com/common/api/bean/activity/detail?activityCode=${$.activityCode}&activityId=${$.activityId}&userOpenId=&timestap=${Date.now()}&userSource=mp&jdChannelId=&appId=wxccb5c536b0ecd1bf&invokeKey=q8DNJdpcfRQ69gIx`;
   const method = `GET`;
   const headers = {
     'cookie' : $.cookie,
