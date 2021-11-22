@@ -17,6 +17,7 @@ let roleMap = {
     "18070420956_p": "刘吴奇_13380353522",
     "羊爱咩咩": "yxb_15390868558",
     "18709853042_p": "wzx_18709853042",
+    "realm_":"泽子怪"
 }
 let cookiesArr = [], cookie = '', jdFruitShareArr = [], isBox = false, notify;
 let newShareCodes = [];
@@ -184,6 +185,11 @@ async function jdFruit() {
             await setHelp();
             if ($.farmInfo.treeState === 2 || $.farmInfo.treeState === 3) {
                 option['open-url'] = urlSchema;
+                mes = "<font color=\'#988241\' size=4>【东东农场⏰】\n\n</font><font color=\'#8600FF\' size=4>" + `${getManName}` + "🐽</font><font color=\'#000000\' size=2>" +
+                    "，你好:\n\n &ensp;  &ensp;  你的宝贝水果 </font><font color=\'#FF0080\' size=4>" + `${$.farmInfo.farmUserPro.name}` + "</font><font color=\'#000000\' size=2> 熟透了,它叫你去找它." +
+                    "\n\n&ensp;  &ensp;  如果你不要它😿，也可以把它作为红包🧧使用，一个水果等于6、12、25、50块红包(对应四个等级).\n\n&ensp;  &ensp; 然后 " +
+                    "</font><font color=\'#EA0000\' size=3>记得再种一个水果🐊\n\n</font><font color=\'#000000\' size=2>"
+                postToDingTalk2(mes)
                 $.msg($.name, ``, `【动动账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去动动APP或微信小程序查看\n点击弹窗即达`, option);
                 if ($.isNode()) {
                     await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName}水果已可领取`, `【动动账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去动动APP或微信小程序查看`);
@@ -446,46 +452,46 @@ async function getTenWaterAward() {
 async function doTenWaterAgain() {
     console.log('开始检查剩余水滴能否再次浇水再次浇水\n');
     await initForFarm();
-    let totalEnergy = $.farmInfo.farmUserPro.totalEnergy;
+    let totalEnergy  = $.farmInfo.farmUserPro.totalEnergy;
     console.log(`剩余水滴${totalEnergy}g\n`);
     await myCardInfoForFarm();
-    const { fastCard, doubleCard, beanCard, signCard } = $.myCardInfoRes;
-    console.log(`背包已有道具:\n快速浇水卡:${fastCard === -1 ? '未解锁' : fastCard + '张'}\n水滴翻倍卡:${doubleCard === -1 ? '未解锁' : doubleCard + '张'}\n水滴换京豆卡:${beanCard === -1 ? '未解锁' : beanCard + '张'}\n加签卡:${signCard === -1 ? '未解锁' : signCard + '张'}\n`)
+    const { fastCard, doubleCard, beanCard, signCard  } = $.myCardInfoRes;
+    console.log(`背包已有道具:\n快速浇水卡:${fastCard === -1 ? '未解锁': fastCard + '张'}\n水滴翻倍卡:${doubleCard === -1 ? '未解锁': doubleCard + '张'}\n水滴换京豆卡:${beanCard === -1 ? '未解锁' : beanCard + '张'}\n加签卡:${signCard === -1 ? '未解锁' : signCard + '张'}\n`)
     if (totalEnergy >= 100 && doubleCard > 0) {
-        //使用翻倍水滴卡
-        for (let i = 0; i < new Array(doubleCard).fill('').length; i++) {
-            await userMyCardForFarm('doubleCard');
-            console.log(`使用翻倍水滴卡结果:${JSON.stringify($.userMyCardRes)}`);
-        }
-        await initForFarm();
-        totalEnergy = $.farmInfo.farmUserPro.totalEnergy;
+      //使用翻倍水滴卡
+      for (let i = 0; i < new Array(doubleCard).fill('').length; i++) {
+        await userMyCardForFarm('doubleCard');
+        console.log(`使用翻倍水滴卡结果:${JSON.stringify($.userMyCardRes)}`);
+      }
+      await initForFarm();
+      totalEnergy = $.farmInfo.farmUserPro.totalEnergy;
     }
     if (signCard > 0) {
-        //使用加签卡
-        for (let i = 0; i < new Array(signCard).fill('').length; i++) {
-            await userMyCardForFarm('signCard');
-            console.log(`使用加签卡结果:${JSON.stringify($.userMyCardRes)}`);
-        }
-        await initForFarm();
-        totalEnergy = $.farmInfo.farmUserPro.totalEnergy;
+      //使用加签卡
+      for (let i = 0; i < new Array(signCard).fill('').length; i++) {
+        await userMyCardForFarm('signCard');
+        console.log(`使用加签卡结果:${JSON.stringify($.userMyCardRes)}`);
+      }
+      await initForFarm();
+      totalEnergy = $.farmInfo.farmUserPro.totalEnergy;
     }
     jdFruitBeanCard = $.getdata('jdFruitBeanCard') ? $.getdata('jdFruitBeanCard') : jdFruitBeanCard;
     if ($.isNode() && process.env.FRUIT_BEAN_CARD) {
-        jdFruitBeanCard = process.env.FRUIT_BEAN_CARD;
+      jdFruitBeanCard = process.env.FRUIT_BEAN_CARD;
     }
     if (`${jdFruitBeanCard}` === 'true' && JSON.stringify($.myCardInfoRes).match('限时翻倍')) {
-        console.log(`\n您设置的是水滴换豆功能,现在为您换豆`);
-        if (totalEnergy >= 100 && $.myCardInfoRes.beanCard > 0) {
-            //使用水滴换豆卡
-            await userMyCardForFarm('beanCard');
-            console.log(`使用水滴换豆卡结果:${JSON.stringify($.userMyCardRes)}`);
-            if ($.userMyCardRes.code === '0') {
-                message += `【水滴换豆卡】获得${$.userMyCardRes.beanCount}个京豆\n`;
-                return
-            }
-        } else {
-            console.log(`您目前水滴:${totalEnergy}g,水滴换豆卡${$.myCardInfoRes.beanCard}张,暂不满足水滴换豆的条件,为您继续浇水`)
+      console.log(`\n您设置的是水滴换豆功能,现在为您换豆`);
+      if (totalEnergy >= 100 && $.myCardInfoRes.beanCard > 0) {
+        //使用水滴换豆卡
+        await userMyCardForFarm('beanCard');
+        console.log(`使用水滴换豆卡结果:${JSON.stringify($.userMyCardRes)}`);
+        if ($.userMyCardRes.code === '0') {
+          message += `【水滴换豆卡】获得${$.userMyCardRes.beanCount}个京豆\n`;
+          return
         }
+      } else {
+        console.log(`您目前水滴:${totalEnergy}g,水滴换豆卡${$.myCardInfoRes.beanCard}张,暂不满足水滴换豆的条件,为您继续浇水`)
+      }
     }
     // if (totalEnergy > 100 && $.myCardInfoRes.fastCard > 0) {
     //   //使用快速浇水卡
@@ -500,71 +506,65 @@ async function doTenWaterAgain() {
     // 所有的浇水(10次浇水)任务，获取水滴任务完成后，如果剩余水滴大于等于60g,则继续浇水(保留部分水滴是用于完成第二天的浇水10次的任务)
     let overageEnergy = totalEnergy - retainWater;
     if (totalEnergy >= ($.farmInfo.farmUserPro.treeTotalEnergy - $.farmInfo.farmUserPro.treeEnergy)) {
-        //如果现有的水滴，大于水果可兑换所需的对滴(也就是把水滴浇完，水果就能兑换了)
-        isFruitFinished = false;
-        for (let i = 0; i < ($.farmInfo.farmUserPro.treeTotalEnergy - $.farmInfo.farmUserPro.treeEnergy) / 10; i++) {
-            await waterGoodForFarm();
-            console.log(`本次浇水结果(水果马上就可兑换了):   ${JSON.stringify($.waterResult)}`);
-            if ($.waterResult.code === '0') {
-                console.log('\n浇水10g成功\n');
-                if ($.waterResult.finished) {
-                    // 已证实，waterResult.finished为true，表示水果可以去领取兑换了
-                    isFruitFinished = true;
-                    break
-                } else {
-                    console.log(`目前水滴【${$.waterResult.totalEnergy}】g,继续浇水，水果马上就可以兑换了`)
-                }
-            } else {
-                console.log('浇水出现失败异常,跳出不在继续浇水')
-                break;
-            }
+      //如果现有的水滴，大于水果可兑换所需的对滴(也就是把水滴浇完，水果就能兑换了)
+      isFruitFinished = false;
+      for (let i = 0; i < ($.farmInfo.farmUserPro.treeTotalEnergy - $.farmInfo.farmUserPro.treeEnergy) / 10; i++) {
+        await waterGoodForFarm();
+        console.log(`本次浇水结果(水果马上就可兑换了):   ${JSON.stringify($.waterResult)}`);
+        if ($.waterResult.code === '0') {
+          console.log('\n浇水10g成功\n');
+          if ($.waterResult.finished) {
+            // 已证实，waterResult.finished为true，表示水果可以去领取兑换了
+            isFruitFinished = true;
+            break
+          } else {
+            console.log(`目前水滴【${$.waterResult.totalEnergy}】g,继续浇水，水果马上就可以兑换了`)
+          }
+        } else {
+          console.log('浇水出现失败异常,跳出不在继续浇水')
+          break;
         }
-        if (isFruitFinished) {
-            option['open-url'] = urlSchema;
-            $.msg($.name, ``, `【京东账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去京东APP或微信小程序查看\n点击弹窗即达`, option);
-
-            $.done();
-            if ($.isNode()) {
-                await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName || $.UserName}水果已可领取`, `京东账号${$.index} ${$.nickName || $.UserName}\n${$.farmInfo.farmUserPro.name}已可领取`);
-            }
+      }
+      if (isFruitFinished) {
+        option['open-url'] = urlSchema;
+        $.msg($.name, ``, `【京东账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去京东APP或微信小程序查看\n点击弹窗即达`, option);
+        $.done();
+        if ($.isNode()) {
+          await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName || $.UserName}水果已可领取`, `京东账号${$.index} ${$.nickName || $.UserName}\n${$.farmInfo.farmUserPro.name}已可领取`);
         }
+      }
     } else if (overageEnergy >= 10) {
-        console.log("目前剩余水滴：【" + totalEnergy + "】g，可继续浇水");
-        isFruitFinished = false;
-        for (let i = 0; i < parseInt(overageEnergy / 10); i++) {
-            await waterGoodForFarm();
-            console.log(`本次浇水结果:   ${JSON.stringify($.waterResult)}`);
-            if ($.waterResult.code === '0') {
-                console.log(`\n浇水10g成功,剩余${$.waterResult.totalEnergy}\n`)
-                if ($.waterResult.finished) {
-                    // 已证实，waterResult.finished为true，表示水果可以去领取兑换了
-                    isFruitFinished = true;
-                    break
-                } else {
-                    await gotStageAward()
-                }
-            } else {
-                console.log('浇水出现失败异常,跳出不在继续浇水')
-                break;
-            }
+      console.log("目前剩余水滴：【" + totalEnergy + "】g，可继续浇水");
+      isFruitFinished = false;
+      for (let i = 0; i < parseInt(overageEnergy / 10); i++) {
+        await waterGoodForFarm();
+        console.log(`本次浇水结果:   ${JSON.stringify($.waterResult)}`);
+        if ($.waterResult.code === '0') {
+          console.log(`\n浇水10g成功,剩余${$.waterResult.totalEnergy}\n`)
+          if ($.waterResult.finished) {
+            // 已证实，waterResult.finished为true，表示水果可以去领取兑换了
+            isFruitFinished = true;
+            break
+          } else {
+            await gotStageAward()
+          }
+        } else {
+          console.log('浇水出现失败异常,跳出不在继续浇水')
+          break;
         }
-        if (isFruitFinished) {
-            mes = "<font color=\'#988241\' size=4>【东东农场⏰】\n\n</font><font color=\'#8600FF\' size=4>" + `${getManName}` + "🐽</font><font color=\'#000000\' size=2>" +
-                "，你好:\n\n &ensp;  &ensp;  你的宝贝水果 </font><font color=\'#FF0080\' size=4>" + `${$.farmInfo.farmUserPro.name}` + "</font><font color=\'#000000\' size=2> 熟透了,它叫你去找它." +
-                "\n\n&ensp;  &ensp;  如果你不要它😿，也可以把它作为红包🧧使用，一个水果等于6、12、25、50块红包(对应四个等级).\n\n&ensp;  &ensp; 然后 " +
-                "</font><font color=\'#EA0000\' size=3>记得再种一个水果🐊\n\n</font><font color=\'#000000\' size=2>"
-            postToDingTalk2(mes)
-            option['open-url'] = urlSchema;
-            $.msg($.name, ``, `【京东账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去京东APP或微信小程序查看\n点击弹窗即达`, option);
-            $.done();
-            if ($.isNode()) {
-                await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName || $.UserName}水果已可领取`, `京东账号${$.index} ${$.nickName || $.UserName}\n${$.farmInfo.farmUserPro.name}已可领取`);
-            }
+      }
+      if (isFruitFinished) {
+        option['open-url'] = urlSchema;
+        $.msg($.name, ``, `【京东账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去京东APP或微信小程序查看\n点击弹窗即达`, option);
+        $.done();
+        if ($.isNode()) {
+          await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName || $.UserName}水果已可领取`, `京东账号${$.index} ${$.nickName || $.UserName}\n${$.farmInfo.farmUserPro.name}已可领取`);
         }
+      }
     } else {
-        console.log("目前剩余水滴：【" + totalEnergy + "】g,不再继续浇水,保留部分水滴用于完成第二天【十次浇水得水滴】任务")
+      console.log("目前剩余水滴：【" + totalEnergy + "】g,不再继续浇水,保留部分水滴用于完成第二天【十次浇水得水滴】任务")
     }
-}
+  }
 //领取阶段性水滴奖励
 function gotStageAward() {
     return new Promise(async resolve => {
@@ -1650,7 +1650,7 @@ function postToDingTalk2(messgae) {
         },
         "at": {
             "atMobiles": [],
-            "isAtAll": true
+            "isAtAll": false
         }
     }
 
