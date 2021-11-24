@@ -238,6 +238,7 @@ async function shaking() {
             if (newShakeBeanRes.data && newShakeBeanRes.data.rewardBeanAmount) {
                 $.prizeBeanCount += newShakeBeanRes.data.rewardBeanAmount;
                 console.log(`恭喜你，京东会员中奖了，获得${newShakeBeanRes.data.rewardBeanAmount}京豆\n`)
+                message += "<font color=\'#FF0000\' size=2>" + `恭喜你，京东会员中奖了，获得${newShakeBeanRes.data.rewardBeanAmount}京豆` + "</font> </font> \n\n"
             } else {
                 console.log(`未中奖\n`)
             }
@@ -251,16 +252,20 @@ async function shaking() {
             console.log(`剩余摇奖次数：${shakeBeanRes.data.luckyBox.freeTimes}`)
             if (shakeBeanRes.data && shakeBeanRes.data.prizeBean) {
                 console.log(`恭喜你，中奖了，获得${shakeBeanRes.data.prizeBean.count}京豆\n`)
+                message += "<font color=\'#FF0000\' size=2>" + `恭喜你，中奖了，获得${shakeBeanRes.data.prizeBean.count}京豆` + "</font> </font> \n\n"
                 $.prizeBeanCount += shakeBeanRes.data.prizeBean.count;
                 $.totalBeanCount = shakeBeanRes.data.luckyBox.totalBeanCount;
             } else if (shakeBeanRes.data && shakeBeanRes.data.prizeCoupon) {
                 console.log(`获得优惠券：${shakeBeanRes.data.prizeCoupon['limitStr']}\n`)
+                message += "<font color=\'#FF0000\' size=2>" + `获得优惠券：${shakeBeanRes.data.prizeCoupon['limitStr']}` + "</font> </font> \n\n"
             } else {
                 console.log(`摇奖其他未知结果：${JSON.stringify(shakeBeanRes)}\n`)
             }
         }
     }
-    if ($.prizeBeanCount > 0) message += `摇京豆：获得${$.prizeBeanCount}京豆`;
+    if ($.prizeBeanCount > 0){
+        message += "<font color=\'#FF0000\' size=2>" +  `摇京豆：获得${$.prizeBeanCount}京豆` + "</font> </font> \n\n"
+    } 
 }
 function showMsg() {
     return new Promise(resolve => {
@@ -296,6 +301,7 @@ function vvipclub_shaking_info() {
                     data = JSON.parse(data);
                     if (data.success) {
                         $.leftShakingTimes = data.data.leftShakingTimes;//剩余抽奖次数
+                        message += "<font color=\'#FF0000\' size=2>" + `京东会员——摇奖次数${$.leftShakingTimes}` + "</font> </font> \n\n"
                         console.log(`京东会员——摇奖次数${$.leftShakingTimes}`);
                     }
                 }
@@ -385,6 +391,7 @@ function getFreeTimes() {
                     if (data.success) {
                         $.freeTimes = data.data.freeTimes;
                         console.log(`摇京豆——摇奖次数${$.freeTimes}`);
+                        message += "<font color=\'#FF0000\' size=2>" + `摇京豆——摇奖次数${$.freeTimes}` + "</font> </font> \n\n"
                     }
                 }
             } catch (e) {
@@ -699,7 +706,6 @@ async function superShakeLottery(appId) {
     if ($.superShakeBeanNum > 0) {
 
         message += "<font color=\'#FFA500\'>" + `${superShakeBeanConfig['superShakeTitle']}：获得${$.superShakeBeanNum}京豆` + "</font> \n\n"
-
         allMessage += `京东账号${$.index}${$.nickName || $.UserName}\n${superShakeBeanConfig['superShakeTitle']}：获得${$.superShakeBeanNum}京豆${$.index !== cookiesArr.length ? '\n\n' : ''}`;
     }
 }
@@ -924,6 +930,7 @@ function superBrandTaskLottery() {
                                     console.log(`超级摇一摇 抽奖结果:${JSON.stringify($.rewardComponent)}`)
                                     if ($.rewardComponent.beanList && $.rewardComponent.beanList.length) {
                                         console.log(`获得${$.rewardComponent.beanList[0]['quantity']}京豆`)
+                                        message += "<font color=\'#FF0000\' size=2>" + `获得${$.rewardComponent.beanList[0]['quantity']}京豆` + "</font> </font> \n\n"
                                         $.superShakeBeanNum += parseInt($.rewardComponent.beanList[0]['quantity']);
                                     }
                                 }
@@ -1095,8 +1102,10 @@ function superbrand_getGift() {
                                         message += "<font color=\'#FFA500\'>" + `【超级品牌日】获得：${item['quantity']}京豆🐶\n` + "</font> \n\n"
 
                                         if ($.superShakeBeanNum === 0) {
+                                            message += "<font color=\'#FF0000\' size=2>" + `【超级品牌日】获得：${item['quantity']}京豆🐶` + "</font> </font> \n\n"
                                             allMessage += `京东账号${$.index}${$.nickName || $.UserName}\n【超级品牌日】获得：${item['quantity']}京豆🐶\n`;
                                         } else {
+                                            message += "<font color=\'#FF0000\' size=2>" + `【超级品牌日】获得：${item['quantity']}京豆🐶` + "</font> </font> \n\n"
                                             allMessage += `【超级品牌日】获得：${item['quantity']}京豆🐶\n`;
                                         }
                                     }
@@ -1327,8 +1336,7 @@ async function shakeSign() {
             beanNum = signRes['data']['rewardVos'] && signRes['data']['rewardVos'][0]['jingBeanVo'] && signRes['data']['rewardVos'][0]['jingBeanVo']['beanNum']
         }
         if (beanNum) {
-            message += "<font color=\'#FFA500\'>" + `京东会员签到：获得${beanNum}京豆` + "</font> \n\n"
-
+            message += "<font color=\'#FFA500\'>" + `京东会员签到：获得${beanNum}京豆` + "</font>\n\n"
         }
     } else {
         console.log(`京东会员第${$.currSignCursor}天已签到`)
