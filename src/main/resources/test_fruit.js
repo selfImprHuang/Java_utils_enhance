@@ -517,6 +517,11 @@ async function doTenWaterAgain() {
                 if ($.waterResult.finished) {
                     // 已证实，waterResult.finished为true，表示水果可以去领取兑换了
                     isFruitFinished = true;
+                    mes = "<font color=\'#988241\' size=4>【东东农场⏰】\n\n</font><font color=\'#8600FF\' size=4>" + `${getManName}` + "🐽</font><font color=\'#000000\' size=2>" +
+                    "，你好:\n\n &ensp;  &ensp;  你的宝贝水果 </font><font color=\'#FF0080\' size=4>" + `${$.farmInfo.farmUserPro.name}` + "</font><font color=\'#000000\' size=2> 熟透了,它叫你去找它." +
+                    "\n\n&ensp;  &ensp;  如果你不要它😿，也可以把它作为红包🧧使用，一个水果等于6、12、25、50块红包(对应四个等级).\n\n&ensp;  &ensp; 然后 " +
+                    "</font><font color=\'#EA0000\' size=3>记得再种一个水果🐊\n\n</font><font color=\'#000000\' size=2>"
+                    postToDingTalk2(mes)
                     break
                 } else {
                     console.log(`目前水滴【${$.waterResult.totalEnergy}】g,继续浇水，水果马上就可以兑换了`)
