@@ -1,25 +1,31 @@
 let dingtalk = "https://oapi.dingtalk.com/robot/send?access_token=d2b6042cb38f0df63e20797c002208d2710104750c18a1dc84d54106a859a3f0"
 let dingtalk2 = "https://oapi.dingtalk.com/robot/send?access_token=04ab95f07aa0397e7167c6ea3a331bc7fcddbc4cda4a482b1e7e76755f97f6a1";
+let dingtalk3 = "https://oapi.dingtalk.com/robot/send?access_token=18c59d04644b68578fae2e76b7eaa319ed7634bc7dce9912dc3977448d9132c7";
 let getManName = ""
 let roleMap = {
     "jd_4521b375ebb5d": "锟子怪",
     "jd_542c10c0222bc": "康子怪",
     "jd_66dcb31363ef6": "涛子怪",
     "jd_45d917547c763": "跑腿小怪C",
-    "417040678_m": "斌子怪",
     "jd_73d88459d908e": "杰杰子",
     "381550701lol": "漪漪子",
     "jd_4333d5dc1ac5f": "舒楠子",
     "jd_66ea783827d30": "跑腿小怪A",
     "jd_4311ac0ff4456": "跑腿小怪B",
+    "realm_": "泽子怪",
+    "happyxyq": "强子怪",
+}
+let roleMap2 = {
+    "jd_45bea6aed42a3":"tdj_18370278790",
     "好吧好吧5577": "wq_18797925088",
     "jd_qapvwBDaRqgW": "wgh_19970291531",
     "18070420956_p": "刘吴奇_13380353522",
     "羊爱咩咩": "yxb_15390868558",
     "18709853042_p": "wzx_18709853042",
-    "realm_": "泽子怪",
-    "happyxyq": "强子怪"
+    "417040678_m": "斌子怪",
 }
+
+
 let cookiesArr = [], cookie = '', jdFruitShareArr = [], isBox = false, notify;
 let newShareCodes = [];
 //助力好友分享码(最多4个,否则后面的助力失败),原因:动动农场每人每天只有四次助力机会
@@ -80,10 +86,10 @@ export DO_TEN_WATER_AGAIN="" 默认再次浇水
             $.nickName = '';
             await TotalBean();
             username = $.UserName
+            getManName = username
             if (roleMap[username] != undefined) {
                 username = roleMap[username]
             }
-            getManName = username
             //加上名称
             message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" + username + " </font> </font> \n\n "
             that.log(`\n开始【动动账号${$.index}】${$.nickName || $.UserName}\n`);
@@ -186,11 +192,20 @@ async function jdFruit() {
             await setHelp();
             if ($.farmInfo.treeState === 2 || $.farmInfo.treeState === 3) {
                 option['open-url'] = urlSchema;
-                mes = "<font color=\'#988241\' size=4>【东东农场⏰】\n\n</font><font color=\'#8600FF\' size=4>" + `${getManName}` + "🐽</font><font color=\'#000000\' size=2>" +
+                if (roleMap[getManName] !=undefined) {
+                    mes = "<font color=\'#988241\' size=4>【东东农场⏰】\n\n</font><font color=\'#8600FF\' size=4>" + `${roleMap[getManName]}` + "🐽</font><font color=\'#000000\' size=2>" +
                     "，你好:\n\n &ensp;  &ensp;  你的宝贝水果 </font><font color=\'#FF0080\' size=4>" + `${$.farmInfo.farmUserPro.name}` + "</font><font color=\'#000000\' size=2> 熟透了,它叫你去找它." +
                     "\n\n&ensp;  &ensp;  如果你不要它😿，也可以把它作为红包🧧使用，一个水果等于6、12、25、50块红包(对应四个等级).\n\n&ensp;  &ensp; 然后 " +
                     "</font><font color=\'#EA0000\' size=3>记得再种一个水果🐊\n\n</font><font color=\'#000000\' size=2>"
-                postToDingTalk2(mes)
+                    postToDingTalk2(mes)
+                }
+                if (roleMap1[getManName] !=undefined) {
+                    mes = "<font color=\'#988241\' size=4>【东东农场⏰】\n\n</font><font color=\'#8600FF\' size=4>" + `${roleMap1[getManName]}` + "🐽</font><font color=\'#000000\' size=2>" +
+                    "，你好:\n\n &ensp;  &ensp;  你的宝贝水果 </font><font color=\'#FF0080\' size=4>" + `${$.farmInfo.farmUserPro.name}` + "</font><font color=\'#000000\' size=2> 熟透了,它叫你去找它." +
+                    "\n\n&ensp;  &ensp;  如果你不要它😿，也可以把它作为红包🧧使用，一个水果等于6、12、25、50块红包(对应四个等级).\n\n&ensp;  &ensp; 然后 " +
+                    "</font><font color=\'#EA0000\' size=3>记得再种一个水果🐊\n\n</font><font color=\'#000000\' size=2>"
+                    postToDingTalk3(mes)
+                }
                 $.msg($.name, ``, `【动动账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去动动APP或微信小程序查看\n点击弹窗即达`, option);
                 if ($.isNode()) {
                     await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName}水果已可领取`, `【动动账号${$.index}】${$.nickName || $.UserName}\n【提醒⏰】${$.farmInfo.farmUserPro.name}已可领取\n请去动动APP或微信小程序查看`);
@@ -202,8 +217,17 @@ async function jdFruit() {
                 //已下单购买, 但未开始种植新的水果
                 option['open-url'] = urlSchema;
                 $.msg($.name, ``, `【动动账号${$.index}】 ${$.nickName || $.UserName}\n【提醒⏰】您忘了种植新的水果\n请去动动APP或微信小程序选购并种植新的水果\n点击弹窗即达`, option);
-                mes = "<font color=\'#778899\' size=2> " + `${getManName}` + "，你好\n\n【提醒⏰】您忘了种植新的水果\n请去京东APP或微信小程序选购并种植新的水果</font>"
-                postToDingTalk2(mes)
+               
+
+                if (roleMap[getManName] !=undefined) {
+                    mes = "<font color=\'#778899\' size=2> " + `${roleMap[getManName]}` + "，你好\n\n【提醒⏰】您忘了种植新的水果\n请去京东APP或微信小程序选购并种植新的水果</font>"
+                    postToDingTalk2(mes)
+                }
+                if (roleMap1[getManName] !=undefined) {
+                    mes = "<font color=\'#778899\' size=2> " + `${roleMap[getManName]}` + "，你好\n\n【提醒⏰】您忘了种植新的水果\n请去京东APP或微信小程序选购并种植新的水果</font>"
+                    postToDingTalk3(mes)
+                }
+
                 if ($.isNode()) {
                     await notify.sendNotify(`${$.name} - 您忘了种植新的水果`, `动动账号${$.index} ${$.nickName}\n【提醒⏰】您忘了种植新的水果\n请去动动APP或微信小程序选购并种植新的水果`);
                 }
@@ -517,11 +541,20 @@ async function doTenWaterAgain() {
                 if ($.waterResult.finished) {
                     // 已证实，waterResult.finished为true，表示水果可以去领取兑换了
                     isFruitFinished = true;
-                    mes = "<font color=\'#988241\' size=4>【东东农场⏰】\n\n</font><font color=\'#8600FF\' size=4>" + `${getManName}` + "🐽</font><font color=\'#000000\' size=2>" +
-                    "，你好:\n\n &ensp;  &ensp;  你的宝贝水果 </font><font color=\'#FF0080\' size=4>" + `${$.farmInfo.farmUserPro.name}` + "</font><font color=\'#000000\' size=2> 熟透了,它叫你去找它." +
-                    "\n\n&ensp;  &ensp;  如果你不要它😿，也可以把它作为红包🧧使用，一个水果等于6、12、25、50块红包(对应四个等级).\n\n&ensp;  &ensp; 然后 " +
-                    "</font><font color=\'#EA0000\' size=3>记得再种一个水果🐊\n\n</font><font color=\'#000000\' size=2>"
-                    postToDingTalk2(mes)
+                    if (roleMap[getManName] !=undefined) {
+                        mes = "<font color=\'#988241\' size=4>【东东农场⏰】\n\n</font><font color=\'#8600FF\' size=4>" + `${roleMap[getManName]}` + "🐽</font><font color=\'#000000\' size=2>" +
+                        "，你好:\n\n &ensp;  &ensp;  你的宝贝水果 </font><font color=\'#FF0080\' size=4>" + `${$.farmInfo.farmUserPro.name}` + "</font><font color=\'#000000\' size=2> 熟透了,它叫你去找它." +
+                        "\n\n&ensp;  &ensp;  如果你不要它😿，也可以把它作为红包🧧使用，一个水果等于6、12、25、50块红包(对应四个等级).\n\n&ensp;  &ensp; 然后 " +
+                        "</font><font color=\'#EA0000\' size=3>记得再种一个水果🐊\n\n</font><font color=\'#000000\' size=2>"
+                        postToDingTalk2(mes)
+                    }
+                    if (roleMap1[getManName] !=undefined) {
+                        mes = "<font color=\'#988241\' size=4>【东东农场⏰】\n\n</font><font color=\'#8600FF\' size=4>" + `${roleMap1[getManName]}` + "🐽</font><font color=\'#000000\' size=2>" +
+                        "，你好:\n\n &ensp;  &ensp;  你的宝贝水果 </font><font color=\'#FF0080\' size=4>" + `${$.farmInfo.farmUserPro.name}` + "</font><font color=\'#000000\' size=2> 熟透了,它叫你去找它." +
+                        "\n\n&ensp;  &ensp;  如果你不要它😿，也可以把它作为红包🧧使用，一个水果等于6、12、25、50块红包(对应四个等级).\n\n&ensp;  &ensp; 然后 " +
+                        "</font><font color=\'#EA0000\' size=3>记得再种一个水果🐊\n\n</font><font color=\'#000000\' size=2>"
+                        postToDingTalk3(mes)
+                    }
                     break
                 } else {
                     console.log(`目前水滴【${$.waterResult.totalEnergy}】g,继续浇水，水果马上就可以兑换了`)
@@ -1661,6 +1694,42 @@ function postToDingTalk2(messgae) {
     }
 
     $.post(toDingtalk(dingtalk2, JSON.stringify(body)), (data, status, xhr) => {
+        try {
+            that.log(resp)
+            that.log(data)
+            if (err) {
+                that.log(JSON.stringify(err));
+                $.logErr(err);
+            } else {
+                if (safeGet(data)) {
+                    $.duckRes = JSON.parse(data);
+                }
+            }
+        } catch (e) {
+            $.logErr(e, resp)
+        } finally {
+            resolve();
+        }
+    }, "json")
+}
+
+function postToDingTalk3(messgae) {
+    const message1 = "" + messgae
+    // that.log(messgae)
+
+    const body = {
+        "msgtype": "markdown",
+        "markdown": {
+            "title": "水果领取",
+            "text": message1
+        },
+        "at": {
+            "atMobiles": [],
+            "isAtAll": false
+        }
+    }
+
+    $.post(toDingtalk(dingtalk3, JSON.stringify(body)), (data, status, xhr) => {
         try {
             that.log(resp)
             that.log(data)
