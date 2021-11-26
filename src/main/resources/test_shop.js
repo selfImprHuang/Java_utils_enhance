@@ -67,6 +67,10 @@ let shareCodes = []
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+      username = $.UserName
+      if(username == "jd_45d917547c763"){
+        continue
+      } 
       $.index = i + 1;
       $.coincount = 0;//收取了多少个蓝币
       $.coinerr = "";
@@ -74,7 +78,7 @@ let shareCodes = []
       $.isLogin = true;
       $.nickName = '';
       await TotalBean();
-      username = $.UserName
+      
       if (roleMap[username] != undefined) {
         username = roleMap[username]
       }

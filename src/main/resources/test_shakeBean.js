@@ -91,7 +91,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
             $.isLogin = true;
             $.nickName = '';
             await TotalBean();
-
+            
             if (roleMap[username] != undefined) {
                 username = roleMap[username]
             }

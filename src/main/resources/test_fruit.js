@@ -15,7 +15,7 @@ let roleMap = {
     "realm_": "泽子怪",
     "happyxyq": "强子怪",
 }
-let roleMap2 = {
+let roleMap1 = {
     "jd_45bea6aed42a3":"tdj_18370278790",
     "好吧好吧5577": "wq_18797925088",
     "jd_qapvwBDaRqgW": "wgh_19970291531",
@@ -224,7 +224,7 @@ async function jdFruit() {
                     postToDingTalk2(mes)
                 }
                 if (roleMap1[getManName] !=undefined) {
-                    mes = "<font color=\'#778899\' size=2> " + `${roleMap[getManName]}` + "，你好\n\n【提醒⏰】您忘了种植新的水果\n请去京东APP或微信小程序选购并种植新的水果</font>"
+                    mes = "<font color=\'#778899\' size=2> " + `${roleMap1[getManName]}` + "，你好\n\n【提醒⏰】您忘了种植新的水果\n请去京东APP或微信小程序选购并种植新的水果</font>"
                     postToDingTalk3(mes)
                 }
 
