@@ -51,6 +51,10 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
             $.nickName = '';
             await TotalBean();
 
+            if (username == "jd_4311ac0ff4456") {
+                continue 
+            }
+
             if (roleMap[username] != undefined) {
                 username = roleMap[username]
             }
