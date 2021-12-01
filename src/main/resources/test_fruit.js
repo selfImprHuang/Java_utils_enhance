@@ -90,6 +90,9 @@ export DO_TEN_WATER_AGAIN="" 默认再次浇水
             if (roleMap[username] != undefined) {
                 username = roleMap[username]
             }
+            if (roleMap1[username] != undefined) {
+                username = roleMap1[username]
+            }
             //加上名称
             message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" + username + " </font> </font> \n\n "
             that.log(`\n开始【动动账号${$.index}】${$.nickName || $.UserName}\n`);
@@ -146,10 +149,10 @@ export DO_TEN_WATER_AGAIN="" 默认再次浇水
             $.nickName = '';
             await TotalBean();
             username = $.UserName
+            getManName = username
             if (roleMap[username] != undefined) {
                 username = roleMap[username]
             }
-            getManName = username
             //加上名称
             message = message + "<font color=\'#778899\' size=2>【羊毛姐妹】<font color=\'#FFA500\' size=3>" + username + " </font> </font> \n\n "
             that.log(`\n开始【动动账号${$.index}】${$.nickName || $.UserName}\n`);
@@ -174,7 +177,6 @@ export DO_TEN_WATER_AGAIN="" 默认再次浇水
     })
     .finally(() => {
         that.log(message)
-        message = message + getPic()
         postToDingTalk(message)
         $.done();
     })
