@@ -28,13 +28,12 @@ if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
   })
-  if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => { };
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 
 //最大化硬币收益模式
-$.JOY_COIN_MAXIMIZE = process.env.JOY_COIN_MAXIMIZE === '1'
+$.JOY_COIN_MAXIMIZE = '1'
 $.log(`最大化收益模式: 已${$.JOY_COIN_MAXIMIZE ? `默认开启` : `关闭`}  `)
 
 const JD_API_HOST = `https://api.m.jd.com/client.action`;
@@ -47,10 +46,7 @@ message = ""
     });
     return;
   }
-  if (process.env.JD_JOY_PARK && process.env.JD_JOY_PARK === 'false') {
-    console.log(`\n******检测到您设置了不运行汪汪乐园，停止运行此脚本******\n`)
-    return;
-  }
+
   for (let i = 0; i < cookiesArr.length; i++) {
     //$.wait(50) 
     // if (process.env.JOYPARK_JOY_START && i == process.env.JOYPARK_JOY_START){
@@ -75,8 +71,7 @@ message = ""
       }
       console.log(`\n\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
       if ($.isNode()) {
-        if (process.env.HELP_JOYPARK && process.env.HELP_JOYPARK == "false") {
-        } else {
+        
           await getShareCode()
           if ($.kgw_invitePin && $.kgw_invitePin.length) {
             $.log("开始帮CK1助力开工位\n");
@@ -93,7 +88,7 @@ message = ""
               console.log(`${JSON.stringify(resp)}`)
             }
           }
-        }
+        
       }
       //下地后还有有钱买Joy并且买了Joy
       $.hasJoyCoin = true
@@ -441,7 +436,7 @@ function getShareCode() {
                   console.log(`${JSON.stringify(err)}`);
                   console.log(`${$.name} API请求失败，请检查网路重试`);
               } else {
-                $.kgw_invitePin = JSON.parse(data);
+                $.kgw_invitePin = [];
               }
           } catch (e) {
               $.logErr(e, resp)
