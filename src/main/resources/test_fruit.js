@@ -14,6 +14,7 @@ let roleMap = {
     "jd_4311ac0ff4456": "跑腿小怪B",
     "realm_": "泽子怪",
     "happyxyq": "强子怪",
+    "jd_5a115078c5aa0":"强子怪2号"
 }
 let roleMap1 = {
     "jd_45bea6aed42a3":"tdj_18370278790",
